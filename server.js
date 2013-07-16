@@ -34,8 +34,15 @@ var remotePath = '/home/serkan/src/beautifulmind/';
 // serkan@10.0.1.2
 var host = 'dev';
 
+var cmd;
 // Command to get changed files
-var cmd = 'ls -1CloTtr $( find . -type f -ctime 0 -print ) | grep -v \'.git/\' | awk \'{ print  $5, $6, $7, $8, "-", $9 }\'';
+if (process.platform === 'darwin'){
+    // for mac os x
+    cmd = 'ls -1CloTtr $( find . -type f -ctime 0 -print ) | grep -v \'.git/\' | awk \'{ print  $5, $6, $7, $8, "-", $9 }\'';
+}else{
+    // for linix
+    cmd = 'ls -1Clotr --time-style=long-iso $( find . -type f -ctime 0 -print ) | grep -v \'.git/\' | awk \'{ print  $5, $6, "-", $7 }\'';
+}
 
 /**
  * Cool way to show script is currently working
