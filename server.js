@@ -23,7 +23,7 @@ var moment = require('moment');
 moment().format();
 
 // How many seconds should script wait for each interval?
-var secondsInterval = 2;
+var secondsInterval = 1.5;
 // Path names to sync
 var localPath = '/Users/serkanyersen/src/beautifulmind';
 var remotePath = '/home/serkan/src/beautifulmind/';
@@ -77,7 +77,7 @@ function getSecondsOf(time) {
  * Upload given file to server then call given callback
  */
 function uploadFile(line, callback, i){
-    console.log(clc.yellow('Changed file: ' + line[0]));
+    process.stdout.write(clc.yellow('Changed file: ' + line[0]));
     // create scp command
     var scp = 'scp ' + line[0] + ' ' + host + ':' + line[1];
     // start printing dots
@@ -104,7 +104,7 @@ function getChangedFiles(lines){
     // an empty array to fill changed files
     var changedFiles = [];
     // create a unix time right before our last check
-    var anIntervalAgo = moment().unix() - (secondsInterval + 1);
+    var anIntervalAgo = moment().unix() - (secondsInterval + 0.5);
     // loop all returned files
     lines.forEach(function(line){
         // split the file list so that we can have the file name and changed date
@@ -144,6 +144,7 @@ setTimeout(function(){
     // stop showing dots
     printDots.stop();
     // Let user know what's happening
+    console.log(clc.reset);
     console.log('Started monitoring, checking every '+secondsInterval+' seconds.');
     console.log('Quit the script with CONTROL-C.');
     console.log(clc.magenta('-----------------------------------------------------------'));
