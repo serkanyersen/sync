@@ -1,0 +1,8 @@
+{
+  "name": "sync.js",
+  "version": "0.0.1",
+  "dependencies": {
+     "moment": "latest",
+     "cli-color": "latest"
+  }
+}
