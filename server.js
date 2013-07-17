@@ -18,8 +18,10 @@ Host dev
 'use strict';
 
 var clc = require('cli-color');
+var write = process.stdout.write.bind(process.stdout);
 var exec = require('child_process').exec;
 var moment = require('moment');
+var printf = require('underscore.string').sprintf;
 moment().format();
 
 // How many seconds should script wait for each interval?
@@ -51,14 +53,12 @@ var printDots = (function(){
     var time = 0;
     return {
         start: function(){
-            this.stop();
             time = setInterval(function(){
-                process.stdout.write(clc.yellow('.'));
+                write(clc.yellow('.'));
             }, 200);
         },
         stop: function(){
             clearInterval(time);
-            console.log('');
         }
     };
 })();
@@ -77,9 +77,9 @@ function getSecondsOf(time) {
  * Upload given file to server then call given callback
  */
 function uploadFile(line, callback, i){
-    process.stdout.write(clc.yellow('Changed file: ' + line[0]));
+    write( clc.magenta(i) + ' ' + clc.yellow(printf('Uploading file: %s', line[0])));
     // create scp command
-    var scp = 'scp ' + line[0] + ' ' + host + ':' + line[1];
+    var scp = printf('scp %s %s:%s', line[0], host, line[1]);
     // start printing dots
     printDots.start();
     //execute command
@@ -88,9 +88,9 @@ function uploadFile(line, callback, i){
         printDots.stop();
         // if there is an error during upload, print it otherwise give user success message
         if (e !== null) {
-            console.log(clc.red('ERROR on: ' +line[1] + ' \n Message:' + e));
+            write(clc.red(printf('ERROR on: %s Message: %s\n', line[1], e)));
         }else{
-            console.log(i+' - ' + clc.green(line[0]+' saved.'));
+            write(clc.green('Saved.\n'));
         }
         // call callback no matter what
         callback();
@@ -130,13 +130,21 @@ function getChangedFiles(lines){
 process.chdir(localPath);
 
 // Show starting text
-console.log('Connecting.');
+write('Connecting.');
 printDots.start();
 
 // Keep a connection open to make scp commands faster
 exec('ssh '+host, function(){
-    console.log(clc.red('Connection ended.'));
+    write(clc.red('Connection ended.'));
 });
+
+var printTitle = function(){
+    write(clc.reset + '\n');
+    write(printf('Started monitoring, checking every %s seconds.\n', secondsInterval));
+    write('Quit the script with CONTROL-C.\n');
+    write(clc.magenta('-----------------------------------------------------------\n'));
+};
+
 
 // wait for 2 seconds so SSH connection can have time to connect
 // Currently there is no way to understand if SSH connection started or not
@@ -144,10 +152,8 @@ setTimeout(function(){
     // stop showing dots
     printDots.stop();
     // Let user know what's happening
-    console.log(clc.reset);
-    console.log('Started monitoring, checking every '+secondsInterval+' seconds.');
-    console.log('Quit the script with CONTROL-C.');
-    console.log(clc.magenta('-----------------------------------------------------------'));
+    printTitle();
+
     // Flag to check if an upload is in progress or not
     var running = false;
 
@@ -162,7 +168,7 @@ setTimeout(function(){
         exec(cmd, function(error, stdout) {
             // if there is an error, print and exit
             if (error !== null) {
-                console.log(clc.red('exec error: ' + error));
+                write(clc.red('exec error: ' + error) + '\n');
             }else{
                 // Get all the lines from the output
                 var lines = stdout.split(/\n/);
@@ -174,8 +180,10 @@ setTimeout(function(){
                     var cf = getChangedFiles(lines);
                     // If there are changed files
                     if(cf.length > 0){
+                        // Clear the screen
+                        printTitle();
                         // Display how many files were changed
-                        console.log(clc.green('>>> ') + cf.length + ' files changed');
+                        write(clc.green('>>> ') + cf.length + ' files changed' + '\n');
                         // Instead of looping changed files list, create a callback loop
                         // so each iteration will start after the previous one is completed
                         // this is needed to prevent creating too many connections with `scp`
@@ -188,11 +196,11 @@ setTimeout(function(){
                                 // switch to next one
                                 uploadFile(cf[i], function(){
                                     uploadAll(++i);
-                                }, ('[' +(i+1) + ' - ' + cf.length)+']'); // [1 - 25] like string to show the status of the upload
+                                }, printf('[%s - %s]', i+1, cf.length)); // [1 - 25] like string to show the status of the upload
                             }else{
                                 // upload is completed so set running to false
                                 running = false;
-                                console.log('All files are uploaded.');
+                                write('All files are uploaded.\n');
                             }
                         };
                         // Start uploading files as soon as function is created
