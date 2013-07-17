@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 /**
  * a nifty tool to sync your local folder with remote folder
- * for best usage, create a config file as ~/.ssh/config
+ * --------------------------------------------------------------
+ * INSTALLATION, just clone this to any place on your computer
+ * and cd to sync folder, then run: `npm install` and run server
+ * by calling `nodejs server.js`
+ * --------------------------------------------------------------
+ * For best usage, create a config file as ~/.ssh/config
  * and put this inside
 ---------- ~/.ssh/config ------------------
 Host *
@@ -12,7 +17,7 @@ Host dev
     HostName {HOST URL OR IP}
     User {YOUR USERNAME}
 -------------------------------------------
- * so script can maintain a persisten SSH connection and be faster
+ * so script can maintain a persistent SSH connection and be faster
  */
 
 'use strict';
@@ -44,7 +49,7 @@ if (process.platform === 'darwin'){
     // for mac os x
     cmd = 'ls -1CloTtr $( find . -type f -mtime -5m -print ) | grep -v \'.git/\' | awk \'{ print  $5, $6, $7, $8, "-", $9 }\'';
 }else{
-    // for linix
+    // for linux
     cmd = 'ls -1Clotr --time-style=+\'%d-%b-%Y %T\' $( find . -type f -mmin -5 -print ) | grep -v \'.git/\' | awk \'{ print  $5, $6, "-", $7 }\'';
 }
 
@@ -75,6 +80,7 @@ function getSecondsOf(time) {
     }
     return 0;
 }
+
 /**
  * Upload given file to server then call given callback
  */
@@ -142,6 +148,7 @@ var ssh = exec('ssh '+host, function(){
     write(clc.red('Connection ended.'));
 });
 
+// Keep the script explanation at the top of the page
 var printTitle = function(){
     write(clc.reset + '\n');
     write(printf('Started monitoring, checking every %s seconds.\n', secondsInterval));
@@ -149,8 +156,7 @@ var printTitle = function(){
     write(clc.magenta('-----------------------------------------------------------\n'));
 };
 
-
-// Wait for SSH connection to completed
+// Wait for SSH connection to be completed
 ssh.stderr.on('data', function (data) {
     // SSH initially throws an exception, when first executed from node.
     // so just ignore that
