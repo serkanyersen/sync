@@ -29,7 +29,8 @@ var secondsInterval = 1.5;
 // Path names to sync
 var localPath = '/Users/serkanyersen/src/beautifulmind';
 var remotePath = '/home/serkan/src/beautifulmind/';
-
+var lastRun = +(new Date());
+var timeDiff = 0;
 // host name:
 // if you don't have a host configuration
 // hostname should include username like
@@ -104,7 +105,7 @@ function getChangedFiles(lines){
     // an empty array to fill changed files
     var changedFiles = [];
     // create a unix time right before our last check
-    var anIntervalAgo = moment().unix() - (secondsInterval + 0.5);
+    var anIntervalAgo = moment().unix() - timeDiff;
     // loop all returned files
     lines.forEach(function(line){
         // split the file list so that we can have the file name and changed date
@@ -162,6 +163,10 @@ ssh.stderr.on('data', function (data) {
 
     // Start Checking the changed files
     var startChecking = function(){
+        // calculate the last time it run, so we can check back to that point and get the changes while file was uploaded
+        timeDiff = (+(new Date()) - lastRun) / 1000;
+        lastRun = +(new Date());
+        // start again
         setTimeout(checkChanges, secondsInterval * 1000);
     };
 
