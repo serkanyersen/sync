@@ -40,10 +40,10 @@ var cmd;
 // Command to get changed files
 if (process.platform === 'darwin'){
     // for mac os x
-    cmd = 'ls -1CloTtr $( find . -type f -ctime 0 -print ) | grep -v \'.git/\' | awk \'{ print  $5, $6, $7, $8, "-", $9 }\'';
+    cmd = 'ls -1CloTtr $( find . -type f -mtime -5m -print ) | grep -v \'.git/\' | awk \'{ print  $5, $6, $7, $8, "-", $9 }\'';
 }else{
     // for linix
-    cmd = 'ls -1Clotr --time-style=long-iso $( find . -type f -ctime 0 -print ) | grep -v \'.git/\' | awk \'{ print  $5, $6, "-", $7 }\'';
+    cmd = 'ls -1Clotr --time-style=long-iso $( find . -type f -mtime -5m -print ) | grep -v \'.git/\' | awk \'{ print  $5, $6, "-", $7 }\'';
 }
 
 /**
