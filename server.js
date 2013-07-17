@@ -22,6 +22,7 @@ var write = process.stdout.write.bind(process.stdout);
 var exec = require('child_process').exec;
 var moment = require('moment');
 var printf = require('underscore.string').sprintf;
+var endsWith = require('underscore.string').endsWith;
 moment().format();
 
 // How many seconds should script wait for each interval?
@@ -120,7 +121,9 @@ function getChangedFiles(lines){
         if (fileSeconds > anIntervalAgo) {
             // create remote file name and add to the array
             var remoteFile = filename.replace('./', remotePath);
-            changedFiles.push([filename, remoteFile]);
+            if(!endsWith(filename, '.swp') && !endsWith(filename, '.pyc')){
+                changedFiles.push([filename, remoteFile]);
+            }
         }
     });
 
