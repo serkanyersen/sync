@@ -44,7 +44,7 @@ if (process.platform === 'darwin'){
     cmd = 'ls -1CloTtr $( find . -type f -mtime -5m -print ) | grep -v \'.git/\' | awk \'{ print  $5, $6, $7, $8, "-", $9 }\'';
 }else{
     // for linix
-    cmd = 'ls -1Clotr --time-style=long-iso $( find . -type f -mtime -5m -print ) | grep -v \'.git/\' | awk \'{ print  $5, $6, "-", $7 }\'';
+    cmd = 'ls -1Clotr --time-style=+\'%d-%b-%Y %T\' $( find . -type f -mmin -5 -print ) | grep -v \'.git/\' | awk \'{ print  $5, $6, "-", $7 }\'';
 }
 
 /**
