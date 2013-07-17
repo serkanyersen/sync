@@ -134,7 +134,7 @@ write('Connecting.');
 printDots.start();
 
 // Keep a connection open to make scp commands faster
-exec('ssh '+host, function(){
+var ssh = exec('ssh '+host, function(){
     write(clc.red('Connection ended.'));
 });
 
@@ -146,24 +146,29 @@ var printTitle = function(){
 };
 
 
-// wait for 2 seconds so SSH connection can have time to connect
-// Currently there is no way to understand if SSH connection started or not
-setTimeout(function(){
+// Wait for SSH connection to completed
+ssh.stderr.on('data', function (data) {
+    // SSH initially throws an exception, when first executed from node.
+    // so just ignore that
+    if(data.toString().indexOf('seudo-terminal') != -1){
+        return;
+    }
+
     // stop showing dots
     printDots.stop();
+
     // Let user know what's happening
     printTitle();
 
-    // Flag to check if an upload is in progress or not
-    var running = false;
+    // Start Checking the changed files
+    var startChecking = function(){
+        setTimeout(checkChanges, secondsInterval * 1000);
+    };
 
     // This interval will run the `find` command for given period of time
     // Until it's stopped by user
-    setInterval(function(){
-        // If an upload is in porgress don't start a new check
-        if(running){
-            return false;
-        }
+    var checkChanges = function(){
+
         // Execute the find command and get all recently changed files
         exec(cmd, function(error, stdout) {
             // if there is an error, print and exit
@@ -188,8 +193,6 @@ setTimeout(function(){
                         // so each iteration will start after the previous one is completed
                         // this is needed to prevent creating too many connections with `scp`
                         var uploadAll = function(){
-                            // Set flag to running, so another interval won't start
-                            running = true;
                             // while index is less than changed files length
                             if(i < cf.length){
                                 // Upload the current file, and when it's finished
@@ -198,18 +201,20 @@ setTimeout(function(){
                                     uploadAll(++i);
                                 }, printf('[%s - %s]', i+1, cf.length)); // [1 - 25] like string to show the status of the upload
                             }else{
-                                // upload is completed so set running to false
-                                running = false;
                                 write('All files are uploaded.\n');
+                                startChecking();
                             }
                         };
                         // Start uploading files as soon as function is created
                         uploadAll();
+                    }else{
+                        startChecking();
                     }
+                }else{
+                    startChecking();
                 }
             }
         });
-
-    }, secondsInterval * 1000);
-
-}, 2000);
+    };
+    startChecking();
+});
