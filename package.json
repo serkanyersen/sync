@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
      "moment": "latest",
-     "cli-color": "latest"
+     "cli-color": "latest",
+     "underscore.string": "latest"
   }
 }
