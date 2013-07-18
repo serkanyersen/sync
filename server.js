@@ -21,7 +21,6 @@ Host dev
  */
 
 'use strict';
-var config = require("./config.json");
 var clc = require('cli-color');
 var write = process.stdout.write.bind(process.stdout);
 var exec = require('child_process').exec;
@@ -31,11 +30,23 @@ var endsWith = require('underscore.string').endsWith;
 moment().format();
 var readline = require('readline');
 
+try{
+  var config = require("./config.json");
+}catch(e){
+  console.log(clc.red('Please create a config file by copying the config_example.json'));
+  process.exit(1);
+}
+
+try{
 var rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
-
+}catch(e){
+  console.log('You need to upgrade your nodejs');
+  console.log('http://slopjong.de/2012/10/31/how-to-install-the-latest-nodejs-in-ubuntu/');
+  process.exit(1);
+}
 
 // How many seconds should script wait for each interval?
 var secondsInterval = config.interval_duration || 1.5;
@@ -171,6 +182,9 @@ var handleInput = function(input){
         case "clear":
             printTitle();
             showPrompt();
+        break;
+        case "exit":
+          process.exit(0);
         break;
         case "":break;
         default:
