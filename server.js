@@ -29,23 +29,25 @@ var printf = require('underscore.string').sprintf;
 var endsWith = require('underscore.string').endsWith;
 moment().format();
 var readline = require('readline');
+var pause = false;
+var startChecking;
 
 try{
-  var config = require("./config.json");
+    var config = require("./config.json");
 }catch(e){
-  console.log(clc.red('Please create a config file by copying the config_example.json'));
-  process.exit(1);
+    console.log(clc.red('Please create a config file by copying the config_example.json'));
+    process.exit(1);
 }
 
 try{
-var rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+    var rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
 }catch(e){
-  console.log('You need to upgrade your nodejs');
-  console.log('http://slopjong.de/2012/10/31/how-to-install-the-latest-nodejs-in-ubuntu/');
-  process.exit(1);
+    console.log('You need to upgrade your nodejs');
+    console.log('http://slopjong.de/2012/10/31/how-to-install-the-latest-nodejs-in-ubuntu/');
+    process.exit(1);
 }
 
 // How many seconds should script wait for each interval?
@@ -169,26 +171,67 @@ var ssh = exec('ssh '+host, function(){
 // Keep the script explanation at the top of the page
 var printTitle = function(){
     write(clc.reset + '\n');
-    write(printf('Started monitoring, checking every %s seconds.\n', secondsInterval));
-    write('Quit the script with CONTROL-C.\n');
+    if(pause){
+        write('Currently paused, type "'+ clc.green('resume') + '" to start again.\n');
+    }else{
+        write(printf('Started monitoring, checking every %s seconds.\n', secondsInterval));
+    }
+    write('Quit the script with CONTROL-C or type "'+clc.green('exit')+'".\n');
     write(clc.magenta('-----------------------------------------------------------\n'));
+    showPrompt();
 };
 
 var handleInput = function(input){
-    switch(input){
+    input = input.split(' ');
+    var cmd = input[0];
+    var arg1 = input[1];
+    switch(cmd){
         case "help":
-            console.log('I\'ll implement commands soon...');
+            var helpText = "";
+            helpText += printf("%s: %s\n", clc.green('pause'), "Stops observing file changes");
+            helpText += printf("%s: %s\n", clc.green('resume'), "Continue checking files");
+            helpText += printf("%s: %s\n", clc.green('resume -u'), "Continue checking files and upload all the changed files while paused.");
+            helpText += printf("%s: %s\n", clc.green('interval [s]'), 'Sets the check interval duration. Example: "interval 2.5" check for every 2.5 seconds');
+            helpText += printf("%s: %s\n", clc.green('help'), "Displays this text");
+            helpText += printf("%s: %s\n", clc.green('clear'), "Clears the screen");
+            helpText += printf("%s: %s\n", clc.green('exit'), "Exits the script");
+            write(helpText);
         break;
         case "clear":
             printTitle();
-            showPrompt();
         break;
         case "exit":
-          process.exit(0);
+            process.exit(0);
+        break;
+        case "pause":
+            pause = true;
+        break;
+        case "resume":
+            if(pause){
+                if(arg1 != "-u"){
+                    lastRun = +(new Date());
+                    timeDiff = 0;
+                }
+                pause = false;
+                printTitle();
+                if(arg1 != "-u"){
+                    write('Finding all changed files while waiting.\n');
+                }
+                startChecking();
+            }else{
+                write('Already running\n');
+            }
+        break;
+        case "interval":
+            if(arg1){
+                secondsInterval = parseFloat(arg1) || secondsInterval;
+                printTitle();
+            }
+            write('Check interval is '+secondsInterval+' Seconds\n');
         break;
         case "":break;
         default:
-            console.log(clc.red('Unknown command: "'+input+'"\nType "help" to see commands'));
+            console.log(clc.red('Unknown command: "'+cmd+'"\nType "help" to see commands'));
     }
 };
 
@@ -212,12 +255,15 @@ ssh.stderr.on('data', function (data) {
 
     // Let user know what's happening
     printTitle();
-    showPrompt();
     // Start Checking the changed files
-    var startChecking = function(){
+    startChecking = function(){
         // calculate the last time it run, so we can check back to that point and get the changes while file was uploaded
         timeDiff = (+(new Date()) - lastRun) / 1000;
         lastRun = +(new Date());
+        if (pause){
+            printTitle();
+            return false;
+        }
         // start again
         setTimeout(checkChanges, secondsInterval * 1000);
     };
@@ -244,6 +290,7 @@ ssh.stderr.on('data', function (data) {
                     if(cf.length > 0){
                         // Clear the screen
                         printTitle();
+
                         // Display how many files were changed
                         write(clc.green('>>> ') + cf.length + ' files changed' + '\n');
                         // Instead of looping changed files list, create a callback loop
