@@ -21,7 +21,7 @@ Host dev
  */
 
 'use strict';
-
+var config = require("./config.json");
 var clc = require('cli-color');
 var write = process.stdout.write.bind(process.stdout);
 var exec = require('child_process').exec;
@@ -38,17 +38,17 @@ var rl = readline.createInterface({
 
 
 // How many seconds should script wait for each interval?
-var secondsInterval = 1.5;
+var secondsInterval = config.interval_duration || 1.5;
 // Path names to sync
-var localPath = '/Users/serkanyersen/src/beautifulmind';
-var remotePath = '/home/serkan/src/beautifulmind/';
+var localPath = config.local_path;
+var remotePath = config.remote_path;
 var lastRun = +(new Date());
 var timeDiff = 0;
 // host name:
 // if you don't have a host configuration
 // hostname should include username like
 // serkan@10.0.1.2
-var host = 'dev';
+var host = config.host;
 
 var cmd;
 // Command to get changed files
