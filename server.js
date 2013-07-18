@@ -29,6 +29,13 @@ var moment = require('moment');
 var printf = require('underscore.string').sprintf;
 var endsWith = require('underscore.string').endsWith;
 moment().format();
+var readline = require('readline');
+
+var rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
 
 // How many seconds should script wait for each interval?
 var secondsInterval = 1.5;
@@ -156,6 +163,28 @@ var printTitle = function(){
     write(clc.magenta('-----------------------------------------------------------\n'));
 };
 
+var handleInput = function(input){
+    switch(input){
+        case "help":
+            console.log('I\'ll implement commands soon...');
+        break;
+        case "clear":
+            printTitle();
+            showPrompt();
+        break;
+        case "":break;
+        default:
+            console.log(clc.red('Unknown command: "'+input+'"\nType "help" to see commands'));
+    }
+};
+
+var showPrompt = function(){
+    rl.question(">>> ", function(answer) {
+      handleInput(answer);
+      showPrompt();
+    });
+};
+
 // Wait for SSH connection to be completed
 ssh.stderr.on('data', function (data) {
     // SSH initially throws an exception, when first executed from node.
@@ -169,7 +198,7 @@ ssh.stderr.on('data', function (data) {
 
     // Let user know what's happening
     printTitle();
-
+    showPrompt();
     // Start Checking the changed files
     var startChecking = function(){
         // calculate the last time it run, so we can check back to that point and get the changes while file was uploaded
@@ -216,6 +245,7 @@ ssh.stderr.on('data', function (data) {
                                 }, printf('[%s - %s]', i+1, cf.length)); // [1 - 25] like string to show the status of the upload
                             }else{
                                 write('All files are uploaded.\n');
+                                showPrompt();
                                 startChecking();
                             }
                         };
