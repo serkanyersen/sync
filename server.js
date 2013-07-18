@@ -29,8 +29,6 @@ var printf = require('underscore.string').sprintf;
 var endsWith = require('underscore.string').endsWith;
 moment().format();
 var readline = require('readline');
-var pause = false;
-var startChecking;
 
 try{
     var config = require("./config.json");
@@ -55,14 +53,20 @@ var secondsInterval = config.interval_duration || 1.5;
 // Path names to sync
 var localPath = config.local_path;
 var remotePath = config.remote_path;
+// when was the last time script checked changes
 var lastRun = +(new Date());
+// how many seconds it took to start checking again
 var timeDiff = 0;
 // host name:
 // if you don't have a host configuration
 // hostname should include username like
 // serkan@10.0.1.2
 var host = config.host;
-
+// if true, stop checking changes
+var pause = false;
+// a global function to start checking changes again
+var startChecking;
+// ls command powered with find to get recently changed files
 var cmd;
 // Command to get changed files
 if (process.platform === 'darwin'){
@@ -165,7 +169,7 @@ printDots.start();
 
 // Keep a connection open to make scp commands faster
 var ssh = exec('ssh '+host, function(){
-    write(clc.red('Connection ended.'));
+    write(clc.red('SSH Connection ended.\n'));
 });
 
 // Keep the script explanation at the top of the page
@@ -181,6 +185,7 @@ var printTitle = function(){
     showPrompt();
 };
 
+// a little command line interface to control the script
 var handleInput = function(input){
     input = input.split(' ');
     var cmd = input[0];
@@ -234,7 +239,7 @@ var handleInput = function(input){
             console.log(clc.red('Unknown command: "'+cmd+'"\nType "help" to see commands'));
     }
 };
-
+// Show prompt line so user can run commands
 var showPrompt = function(){
     rl.question(">>> ", function(answer) {
       handleInput(answer);
@@ -242,10 +247,11 @@ var showPrompt = function(){
     });
 };
 
-// Wait for SSH connection to be completed
+// Wait for SSH connection to be connected
 ssh.stderr.on('data', function (data) {
+
     // SSH initially throws an exception, when first executed from node.
-    // so just ignore that
+    // just ignoring that message is enough
     if(data.toString().indexOf('seudo-terminal') != -1){
         return;
     }
@@ -255,6 +261,7 @@ ssh.stderr.on('data', function (data) {
 
     // Let user know what's happening
     printTitle();
+
     // Start Checking the changed files
     startChecking = function(){
         // calculate the last time it run, so we can check back to that point and get the changes while file was uploaded
@@ -313,13 +320,13 @@ ssh.stderr.on('data', function (data) {
                         // Start uploading files as soon as function is created
                         uploadAll();
                     }else{
-                        startChecking();
+                        startChecking(); // if no changed file found, start checking again
                     }
                 }else{
-                    startChecking();
+                    startChecking(); // if no file returned, start checking again
                 }
             }
-        });
-    };
-    startChecking();
+        }); // EO exec
+    }; // EO checkChanges
+    startChecking(); // initially start checking changes
 });
