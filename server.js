@@ -30,6 +30,7 @@ var endsWith = require('underscore.string').endsWith;
 moment().format();
 var readline = require('readline');
 
+// Check the existance of the config file
 try{
     var config = require("./config.json");
 }catch(e){
@@ -37,6 +38,8 @@ try{
     process.exit(1);
 }
 
+// Ubuntu uses the old version of node.js and it doesn't have support for readline features
+// So check here for errors and warn user about node upgrade
 try{
     var rl = readline.createInterface({
         input: process.stdin,
@@ -109,7 +112,7 @@ function getSecondsOf(time) {
  * Upload given file to server then call given callback
  */
 function uploadFile(line, callback, i){
-    write( clc.magenta(i) + ' ' + clc.yellow(printf('Uploading file: %s', line[0])));
+    write( clc.magenta(i) + ' ' + clc.yellow(printf('Uploading file: %s ', line[0])));
     // create scp command
     var scp = printf('scp %s %s:%s', line[0], host, line[1]);
     // start printing dots
@@ -122,7 +125,7 @@ function uploadFile(line, callback, i){
         if (e !== null) {
             write(clc.red(printf('ERROR on: %s Message: %s\n', line[1], e)));
         }else{
-            write(clc.green('Saved.\n'));
+            write(clc.green(' Saved.\n'));
         }
         // call callback no matter what
         callback();
@@ -304,7 +307,7 @@ ssh.stderr.on('data', function (data) {
                                            "-e 'tell application prev_ to activate'");
                         }
                         // Display how many files were changed
-                        write(clc.green('>>> ') + cf.length + ' files changed' + '\n');
+                        write(cf.length + ' file'+(cf.length>1? 's':'')+' changed.' + '\n');
                         // Instead of looping changed files list, create a callback loop
                         // so each iteration will start after the previous one is completed
                         // this is needed to prevent creating too many connections with `scp`
@@ -315,9 +318,11 @@ ssh.stderr.on('data', function (data) {
                                 // switch to next one
                                 uploadFile(cf[i], function(){
                                     uploadAll(++i);
-                                }, printf('[%s - %s]', i+1, cf.length)); // [1 - 25] like string to show the status of the upload
+                                }, cf.length>1? printf('[%s - %s]', i+1, cf.length) : '>'); // [1 - 25] like string to show the status of the upload
                             }else{
-                                write('All files are uploaded.\n');
+                                if(cf.length > 1){
+                                    write('All files are uploaded.\n');
+                                }
                                 showPrompt();
                                 startChecking();
                             }
