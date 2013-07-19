@@ -297,7 +297,9 @@ ssh.stderr.on('data', function (data) {
                     if(cf.length > 0){
                         // Clear the screen
                         printTitle();
-
+                        if(config.visorSupport){
+                            exec('open /Applications/Utilities/Terminal.app');
+                        }
                         // Display how many files were changed
                         write(clc.green('>>> ') + cf.length + ' files changed' + '\n');
                         // Instead of looping changed files list, create a callback loop
