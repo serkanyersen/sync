@@ -298,7 +298,10 @@ ssh.stderr.on('data', function (data) {
                         // Clear the screen
                         printTitle();
                         if(config.visorSupport){
-                            exec('open /Applications/Utilities/Terminal.app');
+                            exec("osascript -e 'set prev_ to name of (info for (path to frontmost application))' " +
+                                           "-e 'tell application \"Terminal\" to activate' " +
+                                           "-e 'delay 1' " +
+                                           "-e 'tell application prev_ to activate'");
                         }
                         // Display how many files were changed
                         write(clc.green('>>> ') + cf.length + ' files changed' + '\n');
