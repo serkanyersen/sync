@@ -279,7 +279,14 @@ var sync = {
 
         // Wait for SSH connection to be connected
         this.ssh.stderr.on('data', function (data) {
-
+            // if asks for password, stop printing dots
+            if(data.toString().indexOf('Next authentication method: password') != -1){
+                self.dotsStop();
+            }
+            // when password is correct, continue printing dots
+            if(data.toString().indexOf('Authentication succeeded') != -1){
+                self.dotsStart();
+            }
             // SSH initially throws an exception, when first executed from node.
             // just ignoring that message is enough
             if(data.toString().indexOf('Entering interactive session') != -1){
