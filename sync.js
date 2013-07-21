@@ -54,6 +54,10 @@ var sync = {
             console.log(this.clc.red('Please create a config file by copying the config_example.json'));
             process.exit(1);
         }
+        // Make sure remote path ends with slash
+        if(!this.endsWith(this.config.remote_path, '/')){
+            this.config.remote_path += '/';
+        }
     },
     /**
      * Start read line process, and check if installed nodejs compatible with it
@@ -236,7 +240,7 @@ var sync = {
                     }
                     this.paused = false;
                     this.printTitle();
-                    if(arg1 != "-u"){
+                    if(arg1 == "-u"){
                         this.write('Finding all changed files while waiting.\n');
                     }
                     this.startChecking();
@@ -267,8 +271,10 @@ var sync = {
         this.dotsStart();
 
         // Keep a connection open to make scp commands faster
-        this.ssh = this.exec('ssh '+this.host, function(){
+        this.ssh = this.exec('ssh -Mv '+this.host, function(){
             self.write(this.clc.red('SSH Connection ended.\n'));
+            // stop showing dots
+            self.dotsStop();
         });
 
         // Wait for SSH connection to be connected
@@ -276,18 +282,16 @@ var sync = {
 
             // SSH initially throws an exception, when first executed from node.
             // just ignoring that message is enough
-            if(data.toString().indexOf('seudo-terminal') != -1){
-                return;
+            if(data.toString().indexOf('Entering interactive session') != -1){
+                // stop showing dots
+                self.dotsStop();
+
+                // Let user know what's happening
+                self.printTitle();
+
+                // Start Checking changes
+                self.startChecking();
             }
-
-            // stop showing dots
-            self.dotsStop();
-
-            // Let user know what's happening
-            self.printTitle();
-
-            // Start Checking changes
-            self.startChecking();
         });
     },
     /**
@@ -317,7 +321,9 @@ var sync = {
      * When find command is completed, check for changed files and upload them
      * if necessary
      */
-    onFindComplete: function(error, stdout) {
+    onFindComplete: function(error, stdout, stderr) {
+        //console.log(stdout);
+        //console.log(error, stderr);
         // if there is an error, print and exit
         if (error !== null) {
             this.write(this.clc.red('exec error: ' + error) + '\n');
