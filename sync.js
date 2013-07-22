@@ -165,7 +165,9 @@ var sync = {
             if (fileSeconds > anIntervalAgo) {
                 // create remote file name and add to the array
                 var remoteFile = filename.replace('./', self.remotePath);
-                if(!self.endsWith(filename, '.swp') && !self.endsWith(filename, '.pyc')){
+                if(!self.endsWith(filename, '.swp') &&
+                   !self.endsWith(filename, '.pyc') &&
+                    filename != ".DS_Store"){
                     changedFiles.push([filename, remoteFile]);
                 }
             }
