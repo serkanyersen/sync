@@ -272,7 +272,7 @@ var sync = {
 
         // Keep a connection open to make scp commands faster
         this.ssh = this.exec('ssh -Mv '+this.host, function(){
-            self.write(this.clc.red('SSH Connection ended.\n'));
+            self.write(self.clc.red('SSH Connection ended.\n'));
             // stop showing dots
             self.dotsStop();
         });
@@ -282,10 +282,6 @@ var sync = {
             // if asks for password, stop printing dots
             if(data.toString().indexOf('Next authentication method: password') != -1){
                 self.dotsStop();
-            }
-            // when password is correct, continue printing dots
-            if(data.toString().indexOf('Authentication succeeded') != -1){
-                self.dotsStart();
             }
             // SSH initially throws an exception, when first executed from node.
             // just ignoring that message is enough
