@@ -37,7 +37,7 @@ Create a config file using the example file
 ```
 cp config_example.json config.json
 ```
-Config file is very self explanatory, just open it and add your own information
+The config file is very self explanatory, just open it and add your own information
 
 ```json
 {
@@ -47,20 +47,20 @@ Config file is very self explanatory, just open it and add your own information
     "remote_path": "/path/to/remote/folder"
 }
 ```
-To lavarage the openSSH master connection feature, just open `~/.ssh/config` file
-and put following in it - "unless you don't have it already"
+To leverage the openSSH master connection feature, just open `~/.ssh/config` file
+and put the following in it (unless you don't have it already):
 
 ```
 Host *
     ControlMaster auto
     ControlPath ~/.ssh/master-%r@%h:%p
 ```
-Now you are ready to go, start the script by calling sync.js by either `./sync.js` or `nodejs sync.js`
+Now you are ready to go, start the script by calling sync.js with either `./sync.js` or `nodejs sync.js`
 
 That's it.
 
 ### Bonus
-If you are on OSX and using `iTerm` or any other terminal other than default `Terminal.app`. You can install [TotalTerminal](http://totalterminal.binaryage.com/) formerly known as `Visor` and start `sync.js` from it. And if you add this line to `config.json`
+If you are on OSX and using `iTerm` or any other terminal other than the default `Terminal.app`, you can install [TotalTerminal](http://totalterminal.binaryage.com/) formerly known as `Visor` and start `sync.js` from it. And if you add this line to `config.json`
 
 ```
 "visorSupport": true
