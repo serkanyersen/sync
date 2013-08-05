@@ -167,7 +167,7 @@ var sync = {
                 var remoteFile = filename.replace('./', self.remotePath);
                 if(!self.endsWith(filename, '.swp') &&
                    !self.endsWith(filename, '.pyc') &&
-                    filename != ".DS_Store"){
+                   !self.endsWith(filename, '.DS_Store')){
                     changedFiles.push([filename, remoteFile]);
                 }
             }
