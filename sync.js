@@ -274,9 +274,10 @@ var sync = {
 
         // Keep a connection open to make scp commands faster
         this.ssh = this.exec('ssh -Mv '+this.host, function(){
-            self.write(self.clc.red('SSH Connection ended.\n'));
+            self.write(self.clc.red('\nSSH connection failed.\n'));
             // stop showing dots
             self.dotsStop();
+            process.exit(1);
         });
 
         // Wait for SSH connection to be connected
