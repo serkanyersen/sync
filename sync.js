@@ -4,44 +4,60 @@ var Sync = (function () {
     * Initiate the script
     */
     function Sync() {
-        // for colored and powerful command line
+        /**
+        * for colored and powerful command line
+        */
         this.clc = require('cli-color');
-        // shortcut to write to console
+        /**
+        * shortcut to write to console
+        */
         this.write = process.stdout.write.bind(process.stdout);
-        // execute a child process
+        /**
+        * execute a child process
+        */
         this.exec = require('child_process').exec;
-        // Date Time parsing easy way
+        /**
+        * Date Time parsing easy way
+        */
         this.moment = require('moment');
-        // self explanatory sprintf method
+        /**
+        * self explanatory sprintf method
+        */
         this.sprintf = require('underscore.string').sprintf;
-        // Check if string ends with given substring
+        /**
+        * Check if string ends with given substring
+        */
         this.endsWith = require('underscore.string').endsWith;
-        // read users input, for command line
+        /**
+        * read users input, for command line
+        */
         this.readline = require('readline');
-        // when was the last time script checked changes
+        /**
+        * when was the last time script checked changes
+        */
         this.lastRun = +(new Date());
-        // how many seconds it took to start checking again
+        /**
+        * how many seconds it took to start checking again
+        */
         this.timeDiff = 0;
-        // if true, stop checking changes
+        /**
+        * if true, stop checking changes
+        */
         this.paused = false;
-        // time handler for print dots functions
+        /**
+        * time handler for print dots functions
+        */
         this.pdTime = 0;
         // initiate moment
         this.moment().format();
         this.getConfig();
         this.initReadline();
 
-        // How many seconds should script wait for each interval?
-        this.secondsInterval = this.config.interval_duration || 1.5;
-
         // Path names to sync
-        this.localPath = this.config.local_path;
-        this.remotePath = this.config.remote_path;
         this.generateFindCMD();
-        this.host = this.config.host;
 
         // switch to project path to run commands relatively
-        process.chdir(this.localPath);
+        process.chdir(this.config.local_path);
 
         this.createMasterConection();
     }
@@ -58,6 +74,10 @@ var Sync = (function () {
 
         if (!this.endsWith(this.config.remote_path, '/')) {
             this.config.remote_path += '/';
+        }
+
+        if (!parseInt(this.config.interval_duration + "", 10)) {
+            this.config.interval_duration = 1.5;
         }
     };
 
@@ -130,7 +150,7 @@ var Sync = (function () {
         this.write(this.clc.magenta(i) + ' ' + this.clc.yellow(this.sprintf('Uploading file: %s ', line[0])));
 
         // create scp command
-        var scp = this.sprintf('scp %s %s:%s', line[0], this.host, line[1]);
+        var scp = this.sprintf('scp %s %s:%s', line[0], this.config.host, line[1]);
 
         // start printing dots
         this.dotsStart();
@@ -177,7 +197,7 @@ var Sync = (function () {
 
             if (fileSeconds > anIntervalAgo) {
                 // create remote file name and add to the array
-                var remoteFile = filename.replace('./', self.remotePath);
+                var remoteFile = filename.replace('./', self.config.remote_path);
                 if (!self.endsWith(filename, '.swp') && !self.endsWith(filename, '.pyc') && !self.endsWith(filename, '.DS_Store')) {
                     changedFiles.push([filename, remoteFile]);
                 }
@@ -195,7 +215,7 @@ var Sync = (function () {
         if (this.paused) {
             this.write('Currently paused, type "' + this.clc.green('resume') + '" to start again.\n');
         } else {
-            this.write(this.sprintf('Started monitoring, checking every %s seconds.\n', this.secondsInterval));
+            this.write(this.sprintf('Started monitoring, checking every %s seconds.\n', this.config.interval_duration));
         }
         this.write('Quit the script with CONTROL-C or type "' + this.clc.green('exit') + '".\n');
         this.write(this.clc.magenta('-----------------------------------------------------------\n'));
@@ -268,10 +288,10 @@ var Sync = (function () {
                 break;
             case "interval":
                 if (arg1) {
-                    this.secondsInterval = parseFloat(arg1) || this.secondsInterval;
+                    this.config.interval_duration = parseFloat(arg1) || this.config.interval_duration;
                     this.printTitle();
                 }
-                this.write('Check interval is ' + this.secondsInterval + ' Seconds\n');
+                this.write('Check interval is ' + this.config.interval_duration + ' Seconds\n');
                 break;
             case "":
                 break;
@@ -292,7 +312,7 @@ var Sync = (function () {
         this.dotsStart();
 
         // Keep a connection open to make scp commands faster
-        this.ssh = this.exec('ssh -Mv ' + this.host, function () {
+        this.ssh = this.exec('ssh -Mv ' + this.config.host, function () {
             self.write(self.clc.red('\nSSH connection failed.\n'));
 
             // stop showing dots
@@ -333,7 +353,8 @@ var Sync = (function () {
         }
 
         // start again
-        setTimeout(this.checkChanges.bind(this), this.secondsInterval * 1000);
+        setTimeout(this.checkChanges.bind(this), this.config.interval_duration * 1000);
+        return true;
     };
 
     /**

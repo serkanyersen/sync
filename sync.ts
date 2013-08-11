@@ -21,10 +21,10 @@ Host dev
  */
 
 declare var require: {
-     (id: string): any;
-     resolve(): string;
-     cache: any;
-     extensions: any;
+    (id: string): any;
+    resolve(): string;
+    cache: any;
+    extensions: any;
 }
 
 declare var process: {
@@ -36,65 +36,107 @@ declare var process: {
 }
 
 interface ConfigObject{
-    // IP or url of the remote server
+
+    /**
+     * IP or url of the remote server
+     */
     host: string;
-    // How many seconds will it wait for next interval
+
+    /**
+     * How many seconds will it wait for next interval
+     */
     interval_duration: number;
-    // path of the local folder
+
+    /**
+     * path of the local folder
+     */
     local_path: string;
-    // Path of the remote folder
+
+    /**
+     * Path of the remote folder
+     */
     remote_path: string;
-    // Should I support visor or not
+
+    /**
+     * Should I support visor or not
+     */
     visorSupport: boolean
 }
 
-class Sync implements SyncDefaults {
-    // config object that contains all configuration for script
+class Sync {
+    /**
+     * config object that contains all configuration for script
+     */
     config: ConfigObject;
-    // path of the local folder
-    localPath: string;
-    // How many seconds will it wait for next interval
-    secondsInterval: number;
-    // Path of the remote folder
-    remotePath: string;
-    // IP or url of the remote server
-    host: string;
-    // Readline api
+    /**
+     * Readline api]}
+     */
     rl: any;
-    // command to run ssh to
+    /**
+     * command to run ssh to
+     */
     cmd: string;
-    // Child exec object for running ssh command
+    /**
+     * Child exec object for running ssh command
+     */
     ssh: any;
-    // changed files array
-    cf: Array[];
-    // index of ch array when traversing
+    /**
+     * changed files array
+     */
+    cf: Array<Array<string>>;
+    /**
+     * index of ch array when traversing
+     */
     cfIndex: number;
-    // for colored and powerful command line
-    private clc = require('cli-color')
-    // shortcut to write to console
-    private write = process.stdout.write.bind(process.stdout)
-    // execute a child process
-    private exec = require('child_process').exec
-    // Date Time parsing easy way
-    private moment = require('moment')
-    // self explanatory sprintf method
-    private sprintf = require('underscore.string').sprintf
-    // Check if string ends with given substring
-    private endsWith = require('underscore.string').endsWith
-    // read users input, for command line
-    private readline = require('readline')
-    // when was the last time script checked changes
-    private lastRun = +(new Date())
-    // how many seconds it took to start checking again
-    private timeDiff = 0
-    // if true, stop checking changes
-    private paused = false
-    // time handler for print dots functions
-    private pdTime = 0
+
+    /**
+     * for colored and powerful command line
+     */
+    clc = require('cli-color')
+    /**
+     * shortcut to write to console
+     */
+    write = process.stdout.write.bind(process.stdout)
+    /**
+     * execute a child process
+     */
+    exec = require('child_process').exec
+    /**
+     * Date Time parsing easy way
+     */
+    moment = require('moment')
+    /**
+     * self explanatory sprintf method
+     */
+    sprintf = require('underscore.string').sprintf
+    /**
+     * Check if string ends with given substring
+     */
+    endsWith = require('underscore.string').endsWith
+    /**
+     * read users input, for command line
+     */
+    readline = require('readline')
+    /**
+     * when was the last time script checked changes
+     */
+    lastRun = +(new Date())
+    /**
+     * how many seconds it took to start checking again
+     */
+    timeDiff = 0
+    /**
+     * if true, stop checking changes
+     */
+    paused = false
+    /**
+     * time handler for print dots functions
+     */
+    pdTime = 0
     /**
      * Read config file and check it's existance
      */
-    private getConfig(){
+    getConfig(){
         // Check the existance of the config file
         try{
             this.config = require("./config.json");
@@ -102,9 +144,15 @@ class Sync implements SyncDefaults {
             console.log(this.clc.red('Please create a config file by copying the config_example.json'));
             process.exit(1);
         }
+
         // Make sure remote path ends with slash
         if(!this.endsWith(this.config.remote_path, '/')){
             this.config.remote_path += '/';
+        }
+
+        // If interval is 0 or not a number, fix the value to 1.5
+        if( ! parseInt(this.config.interval_duration + "", 10)){
+            this.config.interval_duration = 1.5;
         }
     }
 
@@ -112,7 +160,7 @@ class Sync implements SyncDefaults {
      * Start read line process, and check if installed nodejs compatible with it
      * @return {[type]} [description]
      */
-    private initReadline() {
+    initReadline(): void {
         // Ubuntu uses the old version of node.js and it doesn't have support for readline features
         // So check here for errors and warn user about node upgrade
         try{
@@ -147,7 +195,7 @@ class Sync implements SyncDefaults {
     /**
      * Convert date time string to unix time
      */
-    private getSecondsOf(time: string) {
+    getSecondsOf(time: string): number {
         var t = this.moment(time);
         if (t !== null) {
             return t.unix();
@@ -159,7 +207,7 @@ class Sync implements SyncDefaults {
      * Generate a find command for both OSX and Ubuntu
      * ubuntu should cover most linux versions
      */
-    private generateFindCMD() {
+    generateFindCMD() {
         // ls command powered with find to get recently changed files
         // Command to get changed files
         if (process.platform === 'darwin'){
@@ -174,12 +222,12 @@ class Sync implements SyncDefaults {
     /**
      * Upload given file to server then call given callback
      */
-    private uploadFile(line: string[], callback: () => void, i: any) {
+    uploadFile(line: string[], callback: () => void, i: any) {
         var self = this;
         // notify user that upload has started
         this.write( this.clc.magenta(i) + ' ' + this.clc.yellow(this.sprintf('Uploading file: %s ', line[0])));
         // create scp command
-        var scp = this.sprintf('scp %s %s:%s', line[0], this.host, line[1]);
+        var scp = this.sprintf('scp %s %s:%s', line[0], this.config.host, line[1]);
         // start printing dots
         this.dotsStart();
         //execute command
@@ -200,7 +248,7 @@ class Sync implements SyncDefaults {
     /**
      * Returns a list of changed files
      */
-    private getChangedFiles(lines: string[]) {
+    getChangedFiles(lines: string[]): Array<Array<string>>{
         var self = this;
         // an empty array to fill changed files
         var changedFiles = [];
@@ -219,7 +267,7 @@ class Sync implements SyncDefaults {
             // if file changed at least an interval ago, then it is a recent change
             if (fileSeconds > anIntervalAgo) {
                 // create remote file name and add to the array
-                var remoteFile = filename.replace('./', self.remotePath);
+                var remoteFile = filename.replace('./', self.config.remote_path);
                 if(!self.endsWith(filename, '.swp') &&
                    !self.endsWith(filename, '.pyc') &&
                    !self.endsWith(filename, '.DS_Store')){
@@ -239,7 +287,7 @@ class Sync implements SyncDefaults {
         if(this.paused){
             this.write('Currently paused, type "'+ this.clc.green('resume') + '" to start again.\n');
         }else{
-            this.write(this.sprintf('Started monitoring, checking every %s seconds.\n', this.secondsInterval));
+            this.write(this.sprintf('Started monitoring, checking every %s seconds.\n', this.config.interval_duration));
         }
         this.write('Quit the script with CONTROL-C or type "'+this.clc.green('exit')+'".\n');
         this.write(this.clc.magenta('-----------------------------------------------------------\n'));
@@ -252,23 +300,23 @@ class Sync implements SyncDefaults {
     public showPrompt() {
         var self = this;
         this.rl.question(">>> ", function(answer) {
-          self.handleInput(answer);
-          // as soon as a command is run, show promt again just a like a real shell
-          self.showPrompt();
+            self.handleInput(answer);
+            // as soon as a command is run, show promt again just a like a real shell
+            self.showPrompt();
         });
     }
 
     /**
      * Short cut to generate a help text
      */
-    private getHelp(command: string, text: string) {
+    getHelp(command: string, text: string): string {
         return this.sprintf("%s: %s\n", this.clc.green(command), text);
     }
 
     /**
      * a little command line interface to control the script
      */
-    private handleInput(inputRaw: string) {
+    handleInput(inputRaw: string) {
         var input = inputRaw.split(' ');
         var cmd = input[0];
         var arg1 = input[1];
@@ -311,12 +359,12 @@ class Sync implements SyncDefaults {
             break;
             case "interval":
                 if(arg1){
-                    this.secondsInterval = parseFloat(arg1) || this.secondsInterval;
+                    this.config.interval_duration = parseFloat(arg1) || this.config.interval_duration;
                     this.printTitle();
                 }
-                this.write('Check interval is '+this.secondsInterval+' Seconds\n');
+                this.write('Check interval is '+this.config.interval_duration+' Seconds\n');
             break;
-            case "":break;
+            case "": break;
             default:
                 console.log(this.clc.red('Unknown command: "'+cmd+'"\nType "help" to see commands'));
         }
@@ -326,14 +374,14 @@ class Sync implements SyncDefaults {
      * Creates a master SSH connection, keeps the connection open
      * so `scp` commands work faster by sharing the same persisten connection
      */
-    private createMasterConection() {
+    createMasterConection() {
         var self = this;
         // Show starting text
         this.write('Connecting.');
         this.dotsStart();
 
         // Keep a connection open to make scp commands faster
-        this.ssh = this.exec('ssh -Mv '+this.host, function(){
+        this.ssh = this.exec('ssh -Mv '+this.config.host, function(){
             self.write(self.clc.red('\nSSH connection failed.\n'));
             // stop showing dots
             self.dotsStop();
@@ -365,7 +413,7 @@ class Sync implements SyncDefaults {
      * Start checking changes, since we don't use setInterval
      * this function is called for starting each loop
      */
-    private startChecking() {
+    startChecking(): boolean {
         // calculate the last time it run, so we can check back to that point and get the changes while file was uploaded
         this.timeDiff = (+(new Date()) - this.lastRun) / 1000;
         this.lastRun = +(new Date());
@@ -374,14 +422,15 @@ class Sync implements SyncDefaults {
             return false;
         }
         // start again
-        setTimeout(this.checkChanges.bind(this), this.secondsInterval * 1000);
+        setTimeout(this.checkChanges.bind(this), this.config.interval_duration * 1000);
+        return true;
     }
 
     /**
      * Execude find command and upload any changed file
      * @return {[type]} [description]
      */
-    private checkChanges() {
+    checkChanges() {
         // Execute the find command and get all recently changed files
         this.exec(this.cmd, this.onFindComplete.bind(this)); // EO exec
     }
@@ -390,7 +439,7 @@ class Sync implements SyncDefaults {
      * When find command is completed, check for changed files and upload them
      * if necessary
      */
-    private onFindComplete(error: string, stdout: string, stderr: string) {
+    onFindComplete(error: string, stdout: string, stderr: string) {
         //console.log(stdout);
         //console.log(error, stderr);
         // if there is an error, print and exit
@@ -434,7 +483,7 @@ class Sync implements SyncDefaults {
      * so each iteration will start after the previous one is completed
      * this is needed to prevent creating too many connections with `scp`
      */
-    private uploadAll(index?: number) {
+    uploadAll(index?: number) {
         var self = this;
         // while index is less than changed files length
         if(this.cfIndex < this.cf.length){
@@ -461,15 +510,11 @@ class Sync implements SyncDefaults {
         this.getConfig();
         this.initReadline();
 
-        // How many seconds should script wait for each interval?
-        this.secondsInterval = this.config.interval_duration || 1.5;
         // Path names to sync
-        this.localPath = this.config.local_path;
-        this.remotePath = this.config.remote_path;
         this.generateFindCMD();
-        this.host = this.config.host;
+
         // switch to project path to run commands relatively
-        process.chdir(this.localPath);
+        process.chdir(this.config.local_path);
 
         this.createMasterConection();
     }
