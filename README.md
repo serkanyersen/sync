@@ -4,7 +4,8 @@ sync.js let's you keep your remote files in sync with your local copy. Whenever 
 When configured correctly, it works really fast because sync.js leverages [openSSH master connection settings](http://protempore.net/~calvins/howto/ssh-connection-sharing/). That means instead of creating new connections for each upload, sync.js keeps one connection open and uses it for all uploads.
 
 ### Why did I do this? Aren't there already tools doing the same exact thing?
-Yes there are. However, none of them fulfills my needs. I use Sublime Text 2 and occasionally VIM. ST2 has `SFTP` plugin but it doesn't have ST3 support yet, also it doesn't upload files when they changed via other editors.
+Yes there are. However, none of them fulfills my needs. I use Sublime Text 2 and occasionally VIM. ST2 has `SFTP` plugin 
+~~but it doesn't have ST3 support yet~~, also it doesn't upload files when they changed via other editors.
 
 I tried `unison` but it kills the CPU and syncs remote to local too. Configuration was too complex and it was not really customizable. As soon as I started `unison` it filled my computer with all the compressed scripts and tmp files from the server.
 
