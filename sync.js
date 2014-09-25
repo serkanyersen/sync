@@ -137,6 +137,7 @@ var sync = {
                 self.write(self.clc.red(self.sprintf('ERROR on: %s Message: %s\n', line[1], e)));
             }else{
                 self.write(self.clc.green(' Saved.\n'));
+                self.showNotification('File uploaded');
             }
             // call callback no matter what
             callback();
@@ -316,6 +317,15 @@ var sync = {
         setTimeout(this.checkChanges.bind(this), this.secondsInterval * 1000);
     },
     /**
+     * Show a notification using mac os x notification center
+     * @param  {[type]} message Message to show
+     */
+    showNotification: function(message) {
+        if (this.config.showNotification) {
+            this.exec("osascript -e 'display notification \""+message+"\" with title \"Sync.js\"'");
+        }
+    },
+    /**
      * Execude find command and upload any changed file
      * @return {[type]} [description]
      */
@@ -333,6 +343,7 @@ var sync = {
         // if there is an error, print and exit
         if (error !== null) {
             this.write(this.clc.red('exec error: ' + error) + '\n');
+            this.showNotification('exec error: ' + error);
         }else{
             // Get all the lines from the output
             var lines = stdout.split(/\n/);
@@ -353,7 +364,9 @@ var sync = {
                                             "-e 'tell application prev_ to activate'");
                     }
                     // Display how many files were changed
-                    this.write(this.cf.length + ' file'+(this.cf.length>1? 's':'')+' changed.' + '\n');
+                    var message = this.cf.length + ' file'+(this.cf.length>1? 's':'')+' changed.' + '\n';
+                    this.write(message);
+                    this.showNotification(message);
 
                     // Start uploading files as soon as function is created
                     this.uploadAll();
@@ -382,6 +395,7 @@ var sync = {
         }else{
             if(this.cf.length > 1){
                 this.write('All files are uploaded.\n');
+                this.showNotification('All files are uploaded');
             }
             this.showPrompt();
             this.startChecking();
