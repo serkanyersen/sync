@@ -96,7 +96,7 @@ var sync = {
      * Convert date time string to unix time
      */
     getSecondsOf: function (time) {
-        var t = this.moment(time);
+        var t = this.moment(new Date(time));
         if (t !== null) {
             return t.unix();
         }
