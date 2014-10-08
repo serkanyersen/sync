@@ -324,6 +324,14 @@ var sync = {
         if (this.config.showNotification) {
             this.exec("osascript -e 'display notification \""+message+"\" with title \"Sync.js\"'");
         }
+        if (this.config.useTerminalNotifier) {
+            var bin = '/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier ';
+            this.exec(bin + ["-title 'Sync.js'",
+                             "-message '" + message + "'",
+                             "-group 'Sync.js'",
+                             "-activate " + this.config.terminalNotifierSenderID,
+                             "-sender " + this.config.terminalNotifierSenderID].join(' '));
+        }
     },
     /**
      * Execude find command and upload any changed file
