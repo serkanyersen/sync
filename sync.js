@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 'use strict';
+
+
 /**
  * a nifty tool to sync your local folder with remote folder
  * --------------------------------------------------------------
