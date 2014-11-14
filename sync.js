@@ -325,7 +325,7 @@ var sync = {
             this.exec("osascript -e 'display notification \""+message+"\" with title \"Sync.js\"'");
         }
         if (this.config.useTerminalNotifier) {
-            var bin = '/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier ';
+            var bin = 'terminal-notifier ';
             this.exec(bin + ["-title 'Sync.js'",
                              "-message '" + message + "'",
                              "-group 'Sync.js'",
