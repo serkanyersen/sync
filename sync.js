@@ -9,6 +9,7 @@
  * --------------------------------------------------------------
  * For best usage, create a config file as ~/.ssh/config
  * and put this inside
+ * Author: Serkan
 ---------- ~/.ssh/config ------------------
 Host *
     ControlMaster auto
