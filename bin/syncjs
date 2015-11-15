@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+var Sync = require('../dist/sync.js');
+
+new Sync.default();
