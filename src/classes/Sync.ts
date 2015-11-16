@@ -1,5 +1,3 @@
-import {exec} from 'child_process';
-import moment = require('moment');
 import SyncError from './SyncError';
 import Config from './Config';
 import CLI from './CLI';
@@ -13,9 +11,7 @@ export default class Sync {
     constructor() {
 
         this.config = new Config();
-        this.cli = new CLI(
-            this.config.intervalDuration
-        );
+        this.cli = new CLI();
 
         this.cli.write('Connecting');
         this.cli.startProgress();

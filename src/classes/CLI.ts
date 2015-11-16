@@ -1,5 +1,4 @@
-import 'colors';
-import { sprintf, endsWith } from 'underscore.string';
+import chalk = require('chalk');
 import readline = require('readline');
 
 export default class CLI {
@@ -11,7 +10,7 @@ export default class CLI {
 
     public paused: boolean;
 
-    constructor(public secondsInterval: number) {
+    constructor() {
         try {
             this.rline = readline.createInterface({
                 input: process.stdin,
@@ -24,18 +23,26 @@ export default class CLI {
         }
     }
 
-    write(msg: string): boolean {
-        return process.stdout.write.bind(process.stdout)(msg);
+    /**
+     * Clear the terminal
+     */
+    clear() {
+        this.write(chalk.reset('\x1b[2J\x1b[0;0H'));
     }
 
-
+    /**
+     * Write something to terminal
+     */
+    write(msg: string | Chalk.ChalkChain): boolean {
+        return process.stdout.write.bind(process.stdout)(msg);
+    }
 
     /**
      * Start printing dots to screen, show script is working
      */
     startProgress() {
         this.pdTime = setInterval(() => {
-            this.write('.'.yellow);
+            this.write(chalk.green('.'))
         }, 200);
     }
 
@@ -46,24 +53,33 @@ export default class CLI {
         clearInterval(this.pdTime);
     }
 
+    /**
+     * Display the workspace for syncjs
+     */
     workspace() {
-        this.write('\n'.reset);
+        this.clear();
 
         if (this.paused) {
-            this.write(`Currently paused, type "${ 'resume'.green }" to start again.\n`);
+            this.write(`Currently paused, type "${ chalk.green('resume') }" to start again.\n`);
         } else {
-            this.write(`Started monitoring, checking every ${ this.secondsInterval } seconds.\n`);
+            this.write(`Started monitoring \n`);
         }
 
-        this.write(`Quit the script with CONTROL-C or type "${ 'exit'.green}".\n`);
-        this.write('-----------------------------------------------------------\n'.magenta);
+        this.write(`Quit the script with CONTROL-C or type "${ chalk.green('exit') }".\n`);
+        this.write(chalk.magenta('-----------------------------------------------------------\n'));
         this.showPrompt();
     }
 
+    /**
+     * Shorthand command to print help text
+     */
     private getHelp(command, text) {
-        return `${command.green}: ${text}\n`;
+        return `${ chalk.green(command) }: ${text}\n`;
     }
 
+    /**
+     * Display the prompt that asks for input
+     */
     private showPrompt() {
         this.rline.question(">>> ", answer => {
             this.handleInput(answer);
@@ -72,6 +88,9 @@ export default class CLI {
         });
     }
 
+    /**
+     * Handle given input
+     */
     private handleInput(input) {
         input = input.split(' ');
         let cmd = input[0];
@@ -82,7 +101,6 @@ export default class CLI {
                 helpText += this.getHelp('pause', "Stops observing file changes");
                 helpText += this.getHelp('resume', "Continue checking files");
                 helpText += this.getHelp('resume -u', "Continue checking files and upload all the changed files while paused.");
-                helpText += this.getHelp('interval [s]', 'Sets the check interval duration. Example: "interval 2.5" check for every 2.5 seconds');
                 helpText += this.getHelp('help', "Displays this text");
                 helpText += this.getHelp('clear', "Clears the screen");
                 helpText += this.getHelp('exit', "Exits the script");
@@ -114,16 +132,9 @@ export default class CLI {
                     this.write('Already running\n');
                 }
                 break;
-            case "interval":
-                if (arg1) {
-                    this.secondsInterval = parseFloat(arg1) || this.secondsInterval;
-                    this.workspace();
-                }
-                this.write(`Check interval is ${ this.secondsInterval } Seconds\n`);
-                break;
             case "": break;
             default:
-                this.write(`Unknown command: ${ cmd }\nType "help" to see commands`.red);
+                this.write(chalk.red(`Unknown command: ${ cmd }\nType "help" to see commands`));
         }
     }
 }

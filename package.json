@@ -2,12 +2,10 @@
   "name": "sync.js",
   "version": "0.0.1",
   "dependencies": {
+    "chalk": "^1.1.1",
     "chokidar": "^1.2.0",
-    "cli-color": "latest",
-    "colors": "^1.1.2",
     "es6-promise": "^3.0.2",
     "moment": "latest",
-    "scp2": "^0.2.2",
-    "underscore.string": "latest"
+    "scp2": "^0.2.2"
   }
 }
