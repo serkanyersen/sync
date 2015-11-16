@@ -1,11 +1,13 @@
 import {exec} from 'child_process';
 import moment = require('moment');
-import SyncError from './classes/SyncError';
-import Config from './classes/Config';
-import CLI from './classes/CLI';
+import SyncError from './SyncError';
+import Config from './Config';
+import CLI from './CLI';
+import Watcher from './Watcher';
 
 export default class Sync {
     config: Config;
+    watch: Watcher;
     cli: CLI;
 
     constructor() {
@@ -13,8 +15,10 @@ export default class Sync {
         this.cli = new CLI(
             this.config.intervalDuration
         );
+        this.watch = new Watcher();
         this.connect();
     }
+
 
     connect() {
         // Test

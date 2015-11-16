@@ -2,8 +2,11 @@
   "name": "sync.js",
   "version": "0.0.1",
   "dependencies": {
-     "moment": "latest",
-     "cli-color": "latest",
-     "underscore.string": "latest"
+    "chokidar": "^1.2.0",
+    "cli-color": "latest",
+    "colors": "^1.1.2",
+    "moment": "latest",
+    "scp2": "^0.2.2",
+    "underscore.string": "latest"
   }
 }
