@@ -20,6 +20,13 @@ export default class Watcher {
         });
     }
 
+    ready(): Promise<void> {
+        let deferred = new Promise<void>((resolve) => {
+            this.files.on('ready', resolve);
+        });
+        return deferred
+    }
+
     all = (event:string, path:string) => {
         console.log(event, path);
     }

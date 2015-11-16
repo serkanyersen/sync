@@ -1,6 +1,5 @@
 {
-    "host": "username@ssh.yourhost.com",
-    "interval_duration": 1.5,
-    "local_path": "/path/to/local/folder",
-    "remote_path": "/path/to/remote/folder"
+    "host": "username@ssh.example.com",
+    "localPath": "/path/to/local/folder",
+    "remotePath": "/path/to/remote/folder"
 }

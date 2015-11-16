@@ -9,7 +9,7 @@ export default class CLI {
     private lastRun: number;
     private timeDiff: number;
 
-    paused: boolean;
+    public paused: boolean;
 
     constructor(public secondsInterval: number) {
         try {
@@ -29,10 +29,11 @@ export default class CLI {
     }
 
 
+
     /**
      * Start printing dots to screen, show script is working
      */
-    dotsStart() {
+    startProgress() {
         this.pdTime = setInterval(() => {
             this.write('.'.yellow);
         }, 200);
@@ -41,11 +42,11 @@ export default class CLI {
     /**
      * Stop printing dots when process ends
      */
-    dotsStop() {
+    stopProgress() {
         clearInterval(this.pdTime);
     }
 
-    printTitle() {
+    workspace() {
         this.write('\n'.reset);
 
         if (this.paused) {
@@ -59,11 +60,11 @@ export default class CLI {
         this.showPrompt();
     }
 
-    getHelp(command, text) {
+    private getHelp(command, text) {
         return `${command.green}: ${text}\n`;
     }
 
-    showPrompt() {
+    private showPrompt() {
         this.rline.question(">>> ", answer => {
             this.handleInput(answer);
             // as soon as a command is run, show promt again just a like a real shell
@@ -71,7 +72,7 @@ export default class CLI {
         });
     }
 
-    handleInput(input) {
+    private handleInput(input) {
         input = input.split(' ');
         let cmd = input[0];
         let arg1 = input[1];
@@ -88,14 +89,14 @@ export default class CLI {
                 this.write(helpText);
                 break;
             case "clear":
-                this.printTitle();
+                this.workspace();
                 break;
             case "exit":
                 process.exit(0);
                 break;
             case "pause":
                 this.paused = true;
-                this.printTitle();
+                this.workspace();
                 break;
             case "resume":
                 if (this.paused) {
@@ -104,7 +105,7 @@ export default class CLI {
                         this.timeDiff = 0;
                     }
                     this.paused = false;
-                    this.printTitle();
+                    this.workspace();
                     if (arg1 == "-u") {
                         this.write('Finding all changed files while waiting.\n');
                     }
@@ -116,7 +117,7 @@ export default class CLI {
             case "interval":
                 if (arg1) {
                     this.secondsInterval = parseFloat(arg1) || this.secondsInterval;
-                    this.printTitle();
+                    this.workspace();
                 }
                 this.write(`Check interval is ${ this.secondsInterval } Seconds\n`);
                 break;

@@ -11,23 +11,29 @@ export default class Sync {
     cli: CLI;
 
     constructor() {
+
         this.config = new Config();
         this.cli = new CLI(
             this.config.intervalDuration
         );
+
+        this.cli.write('Connecting');
+        this.cli.startProgress();
+
         this.watch = new Watcher();
-        this.connect();
+        this.watch.ready().then(() => {
+            return this.connect();
+        }).then(() => {
+            this.cli.stopProgress();
+            this.cli.workspace();
+        });
     }
 
-
-    connect() {
-        // Test
-        this.cli.write('Connecting');
-        this.cli.dotsStart();
-
-        setTimeout(() => {
-            this.cli.dotsStop();
-            this.cli.printTitle();
-        }, 5000);
+    connect(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            setTimeout(() => {
+                resolve('connected');
+            }, 5000);
+        });
     }
 }
