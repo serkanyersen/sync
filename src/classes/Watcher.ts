@@ -20,7 +20,7 @@ export default class Watcher {
         });
     }
 
-    all = (event:string, path:string) {
+    all = (event:string, path:string) => {
         console.log(event, path);
     }
 
