@@ -1,5 +1,5 @@
-import chalk = require('chalk');
-import readline = require('readline');
+import chalk = require("chalk");
+import readline = require("readline");
 
 export default class CLI {
 
@@ -17,8 +17,8 @@ export default class CLI {
                 output: process.stdout
             });
         } catch (e) {
-            this.write('You need to upgrade your nodejs');
-            this.write('http://slopjong.de/2012/10/31/how-to-install-the-latest-nodejs-in-ubuntu/');
+            this.write("You need to upgrade your nodejs");
+            this.write("http://slopjong.de/2012/10/31/how-to-install-the-latest-nodejs-in-ubuntu/");
             process.exit(1);
         }
     }
@@ -27,7 +27,7 @@ export default class CLI {
      * Clear the terminal
      */
     clear() {
-        this.write(chalk.reset('\x1b[2J\x1b[0;0H'));
+        this.write(chalk.reset("\x1b[2J\x1b[0;0H"));
     }
 
     /**
@@ -42,7 +42,7 @@ export default class CLI {
      */
     startProgress() {
         this.pdTime = setInterval(() => {
-            this.write(chalk.green('.'))
+            this.write(chalk.green("."));
         }, 200);
     }
 
@@ -60,13 +60,13 @@ export default class CLI {
         this.clear();
 
         if (this.paused) {
-            this.write(`Currently paused, type "${ chalk.green('resume') }" to start again.\n`);
+            this.write(`Currently paused, type "${ chalk.green("resume") }" to start again.\n`);
         } else {
             this.write(`Started monitoring \n`);
         }
 
-        this.write(`Quit the script with CONTROL-C or type "${ chalk.green('exit') }".\n`);
-        this.write(chalk.magenta('-----------------------------------------------------------\n'));
+        this.write(`Quit the script with CONTROL-C or type "${ chalk.green("exit") }".\n`);
+        this.write(chalk.magenta("-----------------------------------------------------------\n"));
         this.showPrompt();
     }
 
@@ -92,18 +92,18 @@ export default class CLI {
      * Handle given input
      */
     private handleInput(input) {
-        input = input.split(' ');
+        input = input.split(" ");
         let cmd = input[0];
         let arg1 = input[1];
         switch (cmd) {
             case "help":
                 let helpText = "";
-                helpText += this.getHelp('pause', "Stops observing file changes");
-                helpText += this.getHelp('resume', "Continue checking files");
-                helpText += this.getHelp('resume -u', "Continue checking files and upload all the changed files while paused.");
-                helpText += this.getHelp('help', "Displays this text");
-                helpText += this.getHelp('clear', "Clears the screen");
-                helpText += this.getHelp('exit', "Exits the script");
+                helpText += this.getHelp("pause", "Stops observing file changes");
+                helpText += this.getHelp("resume", "Continue checking files");
+                helpText += this.getHelp("resume -u", "Continue checking files and upload all the changed files while paused.");
+                helpText += this.getHelp("help", "Displays this text");
+                helpText += this.getHelp("clear", "Clears the screen");
+                helpText += this.getHelp("exit", "Exits the script");
                 this.write(helpText);
                 break;
             case "clear":
@@ -125,11 +125,11 @@ export default class CLI {
                     this.paused = false;
                     this.workspace();
                     if (arg1 == "-u") {
-                        this.write('Finding all changed files while waiting.\n');
+                        this.write("Finding all changed files while waiting.\n");
                     }
                     // this.startChecking();
                 } else {
-                    this.write('Already running\n');
+                    this.write("Already running\n");
                 }
                 break;
             case "": break;

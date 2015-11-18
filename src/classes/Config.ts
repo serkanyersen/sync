@@ -1,15 +1,19 @@
-import { parse } from 'jsonplus';
-import { readFileSync, existsSync } from 'fs';
-import { join as pathJoin } from 'path';
+import { parse } from "jsonplus";
+import { readFileSync, existsSync } from "fs";
+import { join as pathJoin } from "path";
 
 interface SyncConfig {
+    "username"?: string;
+    "password"?: string;
+    "port"?: number;
     "host": string;
-    "intervalDuration": number;
     "localPath": string;
     "remotePath": string;
+    "privateKey"?: string;
+    "ignores"?: Array<string|RegExp>;
 }
 
-const FILE_NAME = 'config_example.json';
+const FILE_NAME = "config_example.json";
 
 export default class Config implements SyncConfig{
     private _filename: string;
@@ -17,9 +21,13 @@ export default class Config implements SyncConfig{
 
     // properties
     host: string;
-    intervalDuration: number;
+    username: string;
+    password: string;
+    port: number;
     localPath: string;
     remotePath: string;
+    privateKey: string;
+    ignores: Array<string|RegExp>;
 
     constructor() {
         this._filename = pathJoin(process.cwd(), FILE_NAME);
@@ -45,9 +53,9 @@ export default class Config implements SyncConfig{
      * @TODO add defaults for optional values
      */
     private _expand() {
-        this.host = this._config.host;
-        this.intervalDuration = this._config.intervalDuration;
-        this.localPath = this._config.localPath;
-        this.remotePath = this._config.remotePath;
+        ["host", "port", "username", "password",
+         "localPath", "remotePath", "ignores", "privateKey"].forEach(prop => {
+             this[prop] = this._config[prop];
+         });
     }
 }
