@@ -49,12 +49,18 @@ export default class Uploader {
             // Mode we set can be configured from the config file
             this.client.mkdir(upath.dirname(remote), {mode: this.config.pathMode}, err => {
                 if(err) {
-                    reject(err);
+                    reject({
+                        message: `Could not create ${ upath.dirname(remote) }`,
+                        error: err
+                    });
                 } else {
                     // Uplad the file
                     this.client.upload(fileName, remote, err => {
                         if (err) {
-                            reject(err);
+                            reject({
+                                message: `Could not upload ${ remote }`,
+                                error: err
+                            });
                         } else {
                             resolve(remote);
                         }

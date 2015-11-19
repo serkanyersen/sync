@@ -43,7 +43,7 @@ export default class Watcher {
         this.uploader.uploadFile(path).then(remote => {
             console.log(`File uploaded ${remote}`);
         }).catch((err) => {
-            console.error("Could not upload", err);
+            console.error(err.message, err.error);
         });
     };
 
