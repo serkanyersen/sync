@@ -6,6 +6,7 @@
     "chokidar": "^1.2.0",
     "es6-promise": "^3.0.2",
     "moment": "latest",
-    "scp2": "^0.2.2"
+    "scp2": "^0.2.2",
+    "upath": "^0.1.6"
   }
 }

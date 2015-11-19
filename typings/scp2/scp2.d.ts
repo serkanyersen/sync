@@ -12,19 +12,19 @@ declare module "scp2" {
     }
 
     interface attrs {
-        size: number;
-        uid: number;
-        gid: number;
-        mode: number | string;
-        atime: number;
-        mtime: number;
+        size?: number;
+        uid?: number;
+        gid?: number;
+        mode?: number | string;
+        atime?: number;
+        mtime?: number;
     }
 
     interface writeOptions {
         destination: string;
-        content: string;
-        attrs: attrs;
-        source: string;
+        content?: string;
+        attrs?: attrs;
+        source?: string;
     }
 
     export class Client {
@@ -32,6 +32,7 @@ declare module "scp2" {
         sftp(callback: (err: string, sftp: Client) => void);
         close(): void;
         mkdir(dir: string, attrs: attrs, callback: (err: string) => void);
+        mkdir(dir: string, callback: (err: string) => void);
         write(options: writeOptions, callback: (err: string) => void);
         upload(src: string, destination: string, callback: (err: string) => void);
         download(src: string, destination: string, callback: (err: string) => void);

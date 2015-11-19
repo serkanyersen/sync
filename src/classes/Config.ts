@@ -11,6 +11,7 @@ interface SyncConfig {
     "remotePath": string;
     "privateKey"?: string;
     "ignores"?: Array<string|RegExp>;
+    "pathMode": string;
 }
 
 const FILE_NAME = "config_example.json";
@@ -28,6 +29,7 @@ export default class Config implements SyncConfig{
     remotePath: string;
     privateKey: string;
     ignores: Array<string|RegExp>;
+    pathMode: string = "0755";
 
     constructor() {
         this._filename = pathJoin(process.cwd(), FILE_NAME);
@@ -50,12 +52,11 @@ export default class Config implements SyncConfig{
 
     /**
      * @TODO add checks on required values
-     * @TODO add defaults for optional values
      */
     private _expand() {
-        ["host", "port", "username", "password",
+        ["host", "port", "username", "password", "pathMode",
          "localPath", "remotePath", "ignores", "privateKey"].forEach(prop => {
-             this[prop] = this._config[prop];
+             this[prop] = this._config[prop] || this[prop];
          });
     }
 }

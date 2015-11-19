@@ -1,12 +1,15 @@
 import { Client } from "scp2";
 import Config from "./Config";
+import upath = require("upath");
 
 export default class Uploader {
+    client: Client;
+
     constructor(private config: Config) {}
 
     connect(): Promise<string> {
 
-        let client = new Client({
+        this.client = new Client({
             port: this.config.port,
             host: this.config.host,
             username: this.config.username,
@@ -14,25 +17,52 @@ export default class Uploader {
             privateKey: require("fs").readFileSync(this.config.privateKey),
             debug: true
         });
-        client.sftp((err, sftp) => {
+
+        this.client.sftp((err, sftp) => {
             if (err) {
                 console.log("There was a problem with connection");
             }
         });
 
         return new Promise<string>((resolve, reject) => {
-            client.on("ready", () => {
+            this.client.on("ready", () => {
                 resolve("connected");
             });
         });
     }
 
-    uploadFile(fileName: string) {
-        let remote:string;
 
-        remote = fileName.replace(this.config.localPath, this.config.remotePath);
+    getRemotePath(path: string): string {
+        let normalPath = upath.normalizeSafe(path);
+        let normalLocalPath = upath.normalizeSafe(this.config.localPath);
+        let remotePath = normalPath.replace(normalLocalPath, this.config.remotePath);
+        return upath.normalizeSafe(remotePath);
+    }
 
-        console.log(`local ${fileName} => remote ${remote}`);
+    uploadFile(fileName: string): Promise<string> {
+        let defer = new Promise<string>((resolve, reject) => {
+            let remote = this.getRemotePath(fileName);
 
+            // Client upload also creates the folder but creates it using local mode
+            // in windows it might mean we won't have permissons to save the fileName
+            // So I create the folder manually here to solve that issue.
+            // Mode we set can be configured from the config file
+            this.client.mkdir(upath.dirname(remote), {mode: this.config.pathMode}, err => {
+                if(err) {
+                    reject(err);
+                } else {
+                    // Uplad the file
+                    this.client.upload(fileName, remote, err => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(remote);
+                        }
+                    });
+                }
+            });
+        });
+
+        return defer;
     }
 }

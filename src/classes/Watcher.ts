@@ -32,26 +32,30 @@ export default class Watcher {
     }
 
     all = (event:string, path:string) => {
-        console.log(event, path);
+        console.log(event,": ", path);
     };
 
     add = (path: string) => {
-        console.log("add", path);
+        //console.log("add", path);
     };
 
     change = (path: string) => {
-        this.uploader.uploadFile(path);
+        this.uploader.uploadFile(path).then(remote => {
+            console.log(`File uploaded ${remote}`);
+        }).catch((err) => {
+            console.error("Could not upload", err);
+        });
     };
 
     unlink = (path: string) => {
-        console.log("unlink", path);
+        //console.log("unlink", path);
     };
 
     addDir = (path: string) => {
-        console.log("addDir", path);
+       // console.log("addDir", path);
     };
 
     unlinkDir = (path: string) => {
-        console.log("unlinkDir", path);
+        //console.log("unlinkDir", path);
     };
 }
