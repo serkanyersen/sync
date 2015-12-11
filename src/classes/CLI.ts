@@ -1,5 +1,5 @@
-import chalk = require("chalk");
-import readline = require("readline");
+import * as chalk from "chalk";
+import * as readline from "readline";
 
 export default class CLI {
 

@@ -7,4 +7,3 @@ export default class SyncError {
         console.error(this.message);
     }
 }
-

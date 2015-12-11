@@ -1,4 +1,4 @@
-import chokidar = require("chokidar");
+import * as chokidar from "chokidar";
 import Uploader from "./Uploader";
 import Config from "./Config";
 
@@ -19,16 +19,15 @@ export default class Watcher {
         });
 
         // Attach events
-        ["all", "add", "change", "unlink", "addDir", "unlinkDir"].forEach(method => {
+        ["all", "add", "change", "unlink", "unlinkDir"].forEach(method => {
             this.files.on(method, this[method]);
         });
     }
 
     ready(): Promise<void> {
-        let deferred = new Promise<void>((resolve) => {
-            this.files.on("ready", resolve);
+        return new Promise<void>((resolve) => {
+            this.files.on("ready", ()=>{});
         });
-        return deferred;
     }
 
     all = (event:string, path:string) => {
@@ -49,10 +48,6 @@ export default class Watcher {
 
     unlink = (path: string) => {
         //console.log("unlink", path);
-    };
-
-    addDir = (path: string) => {
-       // console.log("addDir", path);
     };
 
     unlinkDir = (path: string) => {
