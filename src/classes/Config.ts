@@ -14,7 +14,7 @@ interface SyncConfig {
     "pathMode": string;
 }
 
-const FILE_NAME = "config_example.json";
+const FILE_NAME = "sync-config.json";
 
 export default class Config implements SyncConfig{
     private _filename: string;

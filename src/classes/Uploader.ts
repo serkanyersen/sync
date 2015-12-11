@@ -40,7 +40,7 @@ export default class Uploader {
     }
 
     uploadFile(fileName: string): Promise<string> {
-        let defer = new Promise<string>((resolve, reject) => {
+        return new Promise<string>((resolve, reject) => {
             let remote = this.getRemotePath(fileName);
 
             // Client upload also creates the folder but creates it using local mode
@@ -68,7 +68,5 @@ export default class Uploader {
                 }
             });
         });
-
-        return defer;
     }
 }
