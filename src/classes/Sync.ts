@@ -1,4 +1,3 @@
-import SyncError from "./SyncError";
 import Config from "./Config";
 import CLI from "./CLI";
 import Watcher from "./Watcher";
@@ -11,11 +10,12 @@ export default class Sync {
     uploader: Uploader;
 
     constructor() {
+        this.cli = new CLI();
+
         // Get config
-        this.config = new Config();
+        this.config = new Config(this.cli);
 
         // Get Command line interface
-        this.cli = new CLI();
         this.cli.write("Connecting");
         this.cli.startProgress();
 

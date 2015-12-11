@@ -1,6 +1,11 @@
 import * as chalk from "chalk";
 import * as readline from "readline";
 
+export const EXIT_NORMAL = 0;
+export const EXIT_RUNTIME_FAILURE = 7;
+export const EXIT_PARSE_ERROR = 3;
+export const EXIT_INVALID_ARGUMENT = 9;
+
 export default class CLI {
 
     private rline: readline.ReadLine;
@@ -17,8 +22,8 @@ export default class CLI {
                 output: process.stdout
             });
         } catch (e) {
-            this.write("You need to upgrade your nodejs");
-            this.write("http://slopjong.de/2012/10/31/how-to-install-the-latest-nodejs-in-ubuntu/");
+            this.write("You need to upgrade your nodejs\n");
+            this.write("http://slopjong.de/2012/10/31/how-to-install-the-latest-nodejs-in-ubuntu/\n");
             process.exit(1);
         }
     }
@@ -68,6 +73,15 @@ export default class CLI {
         this.write(`Quit the script with CONTROL-C or type "${ chalk.green("exit") }".\n`);
         this.write(chalk.magenta("-----------------------------------------------------------\n"));
         this.showPrompt();
+    }
+
+    usage(message: string = null, code: number = 0): void {
+        if (message) {
+            this.write(chalk.red(message) + '\n\n');
+        }
+        this.write(chalk.green.underline('USAGE:\n'));
+        this.write('TODO\n');
+        process.exit(code);
     }
 
     /**

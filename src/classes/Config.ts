@@ -1,6 +1,7 @@
 import { parse } from "jsonplus";
 import { readFileSync, existsSync } from "fs";
 import { join as pathJoin } from "path";
+import CLI, { EXIT_INVALID_ARGUMENT, EXIT_PARSE_ERROR } from './CLI';
 
 interface SyncConfig {
     "username"?: string;
@@ -31,22 +32,26 @@ export default class Config implements SyncConfig{
     ignores: Array<string|RegExp>;
     pathMode: string = "0755";
 
-    constructor() {
+    constructor(private cli: CLI) {
         this._filename = pathJoin(process.cwd(), FILE_NAME);
         this._fetch();
         this._expand();
     }
 
-    /**
-     * @TODO fail when file is not found
-     * @TODO fail when file cannot be parsed
-     */
     private _fetch() {
         if (existsSync(this._filename)) {
             let configraw;
             if (configraw = readFileSync(this._filename)) {
-                this._config = parse(configraw.toString());
+                try {
+                    this._config = parse(configraw.toString());
+                } catch(e) {
+                    this.cli.usage('Could not parse DB file. Make sure JSON is correct', EXIT_PARSE_ERROR);
+                }
+            } else {
+                this.cli.usage('Cannot read config file. Make sure you have permissions', EXIT_INVALID_ARGUMENT);
             }
+        } else {
+            this.cli.usage('Config file not found', EXIT_INVALID_ARGUMENT);
         }
     }
 
