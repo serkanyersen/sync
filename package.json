@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "main": "dist/main.js",
   "preferGlobal": true,
+  "scripts": {
+    "postinstall": "./node_modules/.bin/tsc"
+  },
   "bin": {
     "syncjs": "bin/syncjs"
   },
@@ -10,8 +13,10 @@
     "chalk": "^1.1.1",
     "chokidar": "^1.2.0",
     "es6-promise": "^3.0.2",
+    "jsonplus": "^1.2.1",
     "moment": "latest",
     "scp2": "^0.2.2",
+    "typescript": "^1.7.3",
     "upath": "^0.1.6"
   }
 }
