@@ -1,6 +1,11 @@
 {
   "name": "sync.js",
   "version": "0.0.1",
+  "main": "dist/main.js",
+  "preferGlobal": true,
+  "bin": {
+    "syncjs": "bin/syncjs"
+  },
   "dependencies": {
     "chalk": "^1.1.1",
     "chokidar": "^1.2.0",
