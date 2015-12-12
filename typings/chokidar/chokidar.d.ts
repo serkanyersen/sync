@@ -37,15 +37,6 @@ declare module "chokidar"
 
     import fs = require("fs");
 
-    interface FSWatcher extends fs.FSWatcher {
-        add(path:string);
-        add(paths:string[]);  // (path / paths): Add files, directories, or glob patterns for tracking. Takes an array of strings or just one string.
-        on(event:string, callback:Function);// Listen for an FS event. Available events: add, addDir, change, unlink, unlinkDir, ready, raw, error. Additionally all is available which gets emitted with the underlying event name and path for every event other than ready, raw, and error.
-        unwatch(path:string);
-        unwatch(paths:string[]); // : Stop watching files, directories, or glob patterns. Takes an array of strings or just one string.
-        close(); //: Removes all listeners from watched files.
-    }
-
-    function watch( fileDirOrGlob:string, options?:WatchOptions ): FSWatcher;
-    function watch( filesDirsOrGlobs:Array<string>, options?:WatchOptions ): FSWatcher;
+    function watch( fileDirOrGlob:string, options?:WatchOptions ):fs.FSWatcher;
+    function watch( filesDirsOrGlobs:Array<string>, options?:WatchOptions ):fs.FSWatcher;
 }

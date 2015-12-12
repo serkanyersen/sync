@@ -14,6 +14,7 @@
     "chokidar": "^1.2.0",
     "es6-promise": "^3.0.2",
     "jsonplus": "^1.2.1",
+    "minimist": "^1.2.0",
     "moment": "latest",
     "scp2": "^0.2.2",
     "typescript": "^1.7.3",

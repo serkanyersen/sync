@@ -1,9 +1,10 @@
 import * as chokidar from "chokidar";
 import Uploader from "./Uploader";
 import Config from "./Config";
+import { FSWatcher } from "fs";
 
 export default class Watcher {
-    files: chokidar.FSWatcher;
+    files: FSWatcher;
 
     constructor(
         private uploader: Uploader,
