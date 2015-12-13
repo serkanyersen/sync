@@ -1,4 +1,5 @@
 import * as upath from "upath";
+import { readFileSync } from "fs";
 import { Client } from "scp2";
 import Config from "./Config";
 
@@ -14,7 +15,7 @@ export default class Uploader {
             host: this.config.host,
             username: this.config.username,
             password: this.config.password,
-            privateKey: require("fs").readFileSync(this.config.privateKey),
+            privateKey: readFileSync(this.config.privateKey).toString(),
             debug: true
         });
 

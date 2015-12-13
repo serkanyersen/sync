@@ -26,34 +26,29 @@ export default class InitConfig {
                 newConfig.password = answer;
             }
             return this.cli.read(`${chalk.green("Port number to connect")} ${leaveEmpty}`);
-        })
-        .then(answer => {
+        }).then(answer => {
             if (Number(answer)) {
                 newConfig.port = Number(answer);
             }
             return this.cli.read(`${chalk.green("Domain or ip address to connect")} ${required}`);
-        })
-        .then(answer => {
+        }).then(answer => {
             if (answer) {
                 newConfig.host = answer;
             }
             return this.cli.read(`${chalk.green("Local Path:")} [${process.cwd()}] ${useDefault}`);
-        })
-        .then(answer => {
+        }).then(answer => {
             if (answer) {
                 newConfig.localPath = upath.normalizeSafe(answer);
             } else {
                 newConfig.localPath = upath.normalizeSafe(process.cwd());
             }
             return this.cli.read(`${chalk.green("Remote Path")} ${required}`);
-        })
-        .then(answer => {
+        }).then(answer => {
             if (answer) {
                 newConfig.remotePath = answer;
             }
             return this.cli.read(`${chalk.green("Path to privateKey if any")} ${leaveEmpty}`);
-        })
-        .then(answer => {
+        }).then(answer => {
             if (answer) {
                 newConfig.privateKey = upath.normalizeSafe(answer);
             }
