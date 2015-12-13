@@ -29,7 +29,7 @@ declare module "scp2" {
 
     export class Client {
         constructor(options: ScpOptions);
-        sftp(callback: (err: string, sftp: Client) => void);
+        sftp(callback: (err: string, sftp: any) => void);
         close(): void;
         mkdir(dir: string, attrs: attrs, callback: (err: string) => void);
         mkdir(dir: string, callback: (err: string) => void);

@@ -32,12 +32,34 @@ export default class Uploader {
         });
     }
 
-
     getRemotePath(path: string): string {
         let normalPath = upath.normalizeSafe(path);
         let normalLocalPath = upath.normalizeSafe(this.config.localPath);
         let remotePath = normalPath.replace(normalLocalPath, this.config.remotePath);
         return upath.normalizeSafe(remotePath);
+    }
+
+    unlinkFile(fileName: string): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            let remote = this.getRemotePath(fileName);
+
+            this.client.sftp((err, sftp) => {
+                if (err) {
+                    reject('SFTP cannot be created');
+                } else {
+                    sftp.ready(()=> {
+                        console.log('connection established');
+                        sftp.unlink(remote, (err) => {
+                            if (err) {
+                                reject('File could not be deleted');
+                            } else {
+                                resolve(remote);
+                            }
+                        });
+                    });
+                }
+            });
+        });
     }
 
     uploadFile(fileName: string): Promise<string> {

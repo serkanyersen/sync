@@ -32,11 +32,15 @@ export default class Watcher {
     }
 
     all = (event:string, path:string) => {
-        console.log(event,": ", path);
+        // console.log(event,": ", path);
     };
 
     add = (path: string) => {
-        //console.log("add", path);
+        this.uploader.uploadFile(path).then(remote => {
+            console.log(`File uploaded ${remote}`);
+        }).catch((err) => {
+            console.error(err.message, err.error);
+        });
     };
 
     change = (path: string) => {
@@ -48,7 +52,11 @@ export default class Watcher {
     };
 
     unlink = (path: string) => {
-        //console.log("unlink", path);
+        this.uploader.unlinkFile(path).then(remote => {
+            console.log(`File deleted ${remote}`);
+        }).catch((err) => {
+            console.log(`Error deleting file ${err}`);
+        });
     };
 
     unlinkDir = (path: string) => {
