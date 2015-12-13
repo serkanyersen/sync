@@ -1,6 +1,6 @@
+import * as upath from "upath";
 import { Client } from "scp2";
 import Config from "./Config";
-import upath = require("upath");
 
 export default class Uploader {
     client: Client;

@@ -72,6 +72,12 @@ export default class CLI {
         return process.stdout.write.bind(process.stdout)(msg);
     }
 
+    read(question: string): Promise<string> {
+        return new Promise<string>((resolve) => {
+            this.rline.question(`${question}:\n>>> `, resolve);
+        });
+    }
+
     /**
      * Start printing dots to screen, show script is working
      */

@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from "fs";
 import { join as pathJoin } from "path";
 import CLI, { EXIT_INVALID_ARGUMENT, EXIT_PARSE_ERROR } from "./CLI";
 
-interface SyncConfig {
+export interface SyncConfig {
     "username"?: string;
     "password"?: string;
     "port"?: number;
@@ -12,10 +12,10 @@ interface SyncConfig {
     "remotePath": string;
     "privateKey"?: string;
     "ignores"?: Array<string|RegExp>;
-    "pathMode": string;
+    "pathMode"?: string;
 }
 
-const FILE_NAME = "sync-config.json";
+export const CONFIG_FILE_NAME = "sync-config.json";
 
 export default class Config implements SyncConfig{
     private _filename: string;
@@ -33,7 +33,7 @@ export default class Config implements SyncConfig{
     pathMode: string = "0755";
 
     constructor(private cli: CLI) {
-        this._filename = pathJoin(process.cwd(), this.cli.getArgument("config", FILE_NAME));
+        this._filename = pathJoin(process.cwd(), this.cli.getArgument("config", CONFIG_FILE_NAME));
         this._fetch();
         this._expand();
     }

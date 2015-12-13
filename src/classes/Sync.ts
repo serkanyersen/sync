@@ -1,7 +1,8 @@
 import Config from "./Config";
-import CLI, { EXIT_NORMAL } from "./CLI";
+import CLI from "./CLI";
 import Watcher from "./Watcher";
 import Uploader from "./Uploader";
+import InitConfig from './InitConfig';
 
 export default class Sync {
     config: Config;
@@ -13,9 +14,7 @@ export default class Sync {
         this.cli = new CLI();
 
         if (this.cli.hasStartupCommand("init")) {
-            this.cli.write("TODO: generate a config file");
-
-            process.exit(EXIT_NORMAL);
+            new InitConfig(this.cli);
         } else {
             // Get config
             this.config = new Config(this.cli);
