@@ -2,10 +2,27 @@ import * as chalk from "chalk";
 import * as readline from "readline";
 import * as minimist from "minimist";
 
-export const EXIT_NORMAL = 0;
-export const EXIT_RUNTIME_FAILURE = 7;
-export const EXIT_PARSE_ERROR = 3;
-export const EXIT_INVALID_ARGUMENT = 9;
+export enum EXIT_CODE {
+    /**
+     * Exit normally
+     */
+    NORMAL = 0,
+
+    /**
+     * Any kind exit with error
+     */
+    RUNTIME_FAILURE = 1,
+
+    /**
+     * If user terminates with ctrl-c use this
+     */
+    TERMINATED = 130,
+
+    /**
+     * Tell user that arguments were wrong
+     */
+    INVALID_ARGUMENT = 128
+}
 
 export default class CLI {
 
@@ -30,7 +47,7 @@ export default class CLI {
         } catch (e) {
             this.write("You need to upgrade your nodejs\n");
             this.write("http://slopjong.de/2012/10/31/how-to-install-the-latest-nodejs-in-ubuntu/\n");
-            process.exit(EXIT_RUNTIME_FAILURE);
+            process.exit(EXIT_CODE.RUNTIME_FAILURE);
         }
     }
 
@@ -160,7 +177,7 @@ export default class CLI {
                 this.workspace();
                 break;
             case "exit":
-                process.exit(EXIT_NORMAL);
+                process.exit(EXIT_CODE.NORMAL);
                 break;
             case "pause":
                 this.paused = true;

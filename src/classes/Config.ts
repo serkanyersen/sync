@@ -1,7 +1,7 @@
 import { parse } from "jsonplus";
 import { readFileSync, existsSync } from "fs";
 import { join as pathJoin } from "path";
-import CLI, { EXIT_INVALID_ARGUMENT, EXIT_PARSE_ERROR } from "./CLI";
+import CLI, { EXIT_CODE } from "./CLI";
 
 export interface SyncConfig {
     "username"?: string;
@@ -45,13 +45,13 @@ export default class Config implements SyncConfig{
                 try {
                     this._config = parse(configraw.toString());
                 } catch(e) {
-                    this.cli.usage("Could not parse DB file. Make sure JSON is correct", EXIT_PARSE_ERROR);
+                    this.cli.usage("Could not parse DB file. Make sure JSON is correct", EXIT_CODE.RUNTIME_FAILURE);
                 }
             } else {
-                this.cli.usage("Cannot read config file. Make sure you have permissions", EXIT_INVALID_ARGUMENT);
+                this.cli.usage("Cannot read config file. Make sure you have permissions", EXIT_CODE.INVALID_ARGUMENT);
             }
         } else {
-            this.cli.usage("Config file not found", EXIT_INVALID_ARGUMENT);
+            this.cli.usage("Config file not found", EXIT_CODE.INVALID_ARGUMENT);
         }
     }
 

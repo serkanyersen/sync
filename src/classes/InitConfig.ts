@@ -1,8 +1,8 @@
-import CLI, {EXIT_NORMAL} from "./CLI";
-import { SyncConfig, CONFIG_FILE_NAME } from './Config';
 import * as chalk from "chalk";
 import * as upath from "upath";
 import { writeFileSync } from 'fs';
+import CLI, { EXIT_CODE } from "./CLI";
+import { SyncConfig, CONFIG_FILE_NAME } from './Config';
 
 export default class InitConfig {
 
@@ -68,7 +68,7 @@ export default class InitConfig {
                 this.cli.write("Operation cancelled. Exiting...");
             }
 
-            process.exit(EXIT_NORMAL);
+            process.exit(EXIT_CODE.NORMAL);
         });
     }
 }
