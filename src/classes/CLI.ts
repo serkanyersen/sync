@@ -1,5 +1,6 @@
 import * as chalk from "chalk";
 import * as readline from "readline";
+import * as minimist from "minimist";
 
 export const EXIT_NORMAL = 0;
 export const EXIT_RUNTIME_FAILURE = 7;
@@ -12,10 +13,15 @@ export default class CLI {
     private pdTime: NodeJS.Timer;
     private lastRun: number;
     private timeDiff: number;
+    private args: minimist.ParsedArgs;
 
     public paused: boolean;
 
     constructor() {
+
+        // Parse arguments
+        this.args = minimist(process.argv.slice(2));
+
         try {
             this.rline = readline.createInterface({
                 input: process.stdin,
@@ -24,8 +30,32 @@ export default class CLI {
         } catch (e) {
             this.write("You need to upgrade your nodejs\n");
             this.write("http://slopjong.de/2012/10/31/how-to-install-the-latest-nodejs-in-ubuntu/\n");
-            process.exit(1);
+            process.exit(EXIT_RUNTIME_FAILURE);
         }
+    }
+
+    /**
+     * Checks if a command has been passed or not
+     * @param command string name of the command
+     */
+    hasStartupCommand(command: string): boolean {
+        return this.args._.filter( n => n === command ).length > 0;
+    }
+
+    /**
+     * Gets requested argument
+     * @param name string name of the argument
+     */
+    getArgument(name: string, defaultValue: any = null): any {
+        let value = null;
+
+        if (name in this.args) {
+            value = this.args[name];
+        } else if (name[0] in this.args) {
+            value = this.args[name[0]];
+        }
+
+        return value !== null? value : defaultValue;
     }
 
     /**
@@ -77,10 +107,10 @@ export default class CLI {
 
     usage(message: string = null, code: number = 0): void {
         if (message) {
-            this.write(chalk.red(message) + '\n\n');
+            this.write(chalk.red(message) + "n\n");
         }
-        this.write(chalk.green.underline('USAGE:\n'));
-        this.write('TODO\n');
+        this.write(chalk.green.underline("USAGE:\n"));
+        this.write("TODO\n");
         process.exit(code);
     }
 
@@ -124,7 +154,7 @@ export default class CLI {
                 this.workspace();
                 break;
             case "exit":
-                process.exit(0);
+                process.exit(EXIT_NORMAL);
                 break;
             case "pause":
                 this.paused = true;
