@@ -1,7 +1,8 @@
 import * as chokidar from "chokidar";
+import { FSWatcher } from "fs";
 import Uploader from "./Uploader";
 import Config from "./Config";
-import { FSWatcher } from "fs";
+import CLI from "./CLI";
 
 export default class Watcher {
     files: FSWatcher;
@@ -9,6 +10,7 @@ export default class Watcher {
     constructor(
         private uploader: Uploader,
         private config: Config,
+        private cli: CLI,
         private base: string = process.cwd()
         ) {
 
@@ -27,7 +29,7 @@ export default class Watcher {
 
     ready(): Promise<void> {
         return new Promise<void>((resolve) => {
-            this.files.on("ready", ()=>{});
+            this.files.on("ready", resolve);
         });
     }
 
@@ -60,6 +62,10 @@ export default class Watcher {
     };
 
     unlinkDir = (path: string) => {
-        //console.log("unlinkDir", path);
+        this.uploader.unlinkFolder(path).then(remote => {
+            console.log(`Folder deleted ${remote}`);
+        }).catch((err) => {
+            console.log(`Error deleting folder ${err}`);
+        });
     };
 }

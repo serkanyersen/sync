@@ -24,10 +24,10 @@ export default class Sync {
             this.cli.startProgress();
 
             // Setup the uploader
-            this.uploader = new Uploader(this.config);
+            this.uploader = new Uploader(this.config, this.cli);
 
             // Initiate file watch
-            this.watch = new Watcher(this.uploader, this.config);
+            this.watch = new Watcher(this.uploader, this.config, this.cli);
 
             // When files are found start connection
             this.watch.ready().then(() => {

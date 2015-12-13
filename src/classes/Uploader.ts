@@ -2,23 +2,24 @@ import * as upath from "upath";
 import { readFileSync } from "fs";
 import { Client } from "scp2";
 import Config from "./Config";
+import CLI from "./CLI";
 
 export default class Uploader {
     client: Client;
 
-    constructor(private config: Config) {}
+    constructor(private config: Config, private cli: CLI) {}
 
     connect(): Promise<string> {
-
         this.client = new Client({
             port: this.config.port,
             host: this.config.host,
             username: this.config.username,
             password: this.config.password,
-            privateKey: readFileSync(this.config.privateKey).toString(),
-            debug: true
+            privateKey: this.config.privateKey? readFileSync(this.config.privateKey).toString() : undefined,
+            // debug: true
         });
 
+        // Triggers the initial connection
         this.client.sftp((err, sftp) => {
             if (err) {
                 console.log("There was a problem with connection");
@@ -42,20 +43,35 @@ export default class Uploader {
     unlinkFile(fileName: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             let remote = this.getRemotePath(fileName);
-
             this.client.sftp((err, sftp) => {
                 if (err) {
                     reject('SFTP cannot be created');
                 } else {
-                    sftp.ready(()=> {
-                        console.log('connection established');
-                        sftp.unlink(remote, (err) => {
-                            if (err) {
-                                reject('File could not be deleted');
-                            } else {
-                                resolve(remote);
-                            }
-                        });
+                    sftp.unlink(remote, (err) => {
+                        if (err) {
+                            reject('File could not be deleted');
+                        } else {
+                            resolve(remote);
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    unlinkFolder(folderPath: string): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            let remote = this.getRemotePath(folderPath);
+            this.client.sftp((err, sftp) => {
+                if (err) {
+                    reject('SFTP cannot be created');
+                } else {
+                    sftp.rmdir(remote, (err) => {
+                        if (err) {
+                            reject('Folder could not be deleted');
+                        } else {
+                            resolve(remote);
+                        }
                     });
                 }
             });
