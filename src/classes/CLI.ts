@@ -41,20 +41,8 @@ export default class CLI {
     public paused: boolean;
 
     constructor() {
-
         // Parse arguments
         this.args = minimist(process.argv.slice(2));
-
-        // try {
-        //     this.rline = readline.createInterface({
-        //         input: process.stdin,
-        //         output: process.stdout
-        //     });
-        // } catch (e) {
-        //     this.write("You need to upgrade your nodejs\n");
-        //     this.write("http://slopjong.de/2012/10/31/how-to-install-the-latest-nodejs-in-ubuntu/\n");
-        //     process.exit(EXIT_CODE.RUNTIME_FAILURE);
-        // }
     }
 
     /**
