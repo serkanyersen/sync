@@ -34,7 +34,7 @@ export default class InitConfig {
             marker += required;
         }
 
-        return `${question}${marker}:\n>>> `;
+        return `${chalk.green(question)}${marker}:\n>>> `;
     }
 
     collectInformation(): void {
