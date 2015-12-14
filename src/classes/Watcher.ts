@@ -12,7 +12,7 @@ export default class Watcher {
         private uploader: Uploader,
         private config: Config,
         private cli: CLI,
-        private base: string = process.cwd()
+        private base: string = config.localPath
     ) {
 
         let defaultIgnores: Array<string | RegExp> = [/node_modules/, /.git/, /.svn/, /bower_components/];
