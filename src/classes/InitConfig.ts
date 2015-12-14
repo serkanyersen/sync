@@ -34,7 +34,7 @@ export default class InitConfig {
             marker += required;
         }
 
-        return `${chalk.green("Username to connect")}${marker}:\n>>> `;
+        return `${question}${marker}:\n>>> `;
     }
 
     collectInformation () {
