@@ -16,6 +16,7 @@
     "jsonplus": "^1.2.1",
     "minimist": "^1.2.0",
     "moment": "latest",
+    "readline-sync": "^1.2.21",
     "scp2": "^0.2.2",
     "typescript": "1.6.2",
     "upath": "^0.1.6"

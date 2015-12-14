@@ -19,18 +19,20 @@ export default class Sync {
             // Get config
             this.config = new Config(this.cli);
 
-            // Get Command line interface
-            this.cli.write("Connecting");
-            this.cli.startProgress();
+            this.config.ready().then(() => {
+                // Get Command line interface
+                this.cli.write("Connecting");
+                this.cli.startProgress();
 
-            // Setup the uploader
-            this.uploader = new Uploader(this.config, this.cli);
+                // Setup the uploader
+                this.uploader = new Uploader(this.config, this.cli);
 
-            // Initiate file watch
-            this.watch = new Watcher(this.uploader, this.config, this.cli);
+                // Initiate file watch
+                this.watch = new Watcher(this.uploader, this.config, this.cli);
 
-            // When files are found start connection
-            this.watch.ready().then(() => {
+                // When files are found start connection
+                return this.watch.ready();
+            }).then(() => {
                 return this.uploader.connect();
             }).then(() => {
                 // All done, stop indicator and show workspace

@@ -34,8 +34,23 @@ export default class Config implements SyncConfig{
 
     constructor(private cli: CLI) {
         this._filename = pathJoin(process.cwd(), this.cli.getArgument("config", CONFIG_FILE_NAME));
-        this._fetch();
-        this._expand();
+    }
+
+    ready(): Promise<void>{
+        return new Promise<void>((resolve) => {
+            this._fetch();
+            this._expand();
+
+            // Temporary
+            if (!this.password && !this.privateKey) {
+                this.cli.read('Password: ', true).then(answer => {
+                    this.password = this._config.password = answer;
+                    resolve();
+                });
+            } else {
+                resolve();
+            }
+        });
     }
 
     private _fetch() {
