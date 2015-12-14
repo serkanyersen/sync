@@ -25,7 +25,7 @@ export enum EXIT_CODE {
     INVALID_ARGUMENT = 128
 }
 
-interface ReadLineOptions{
+interface ReadLineOptions {
     follow?: string;
     hideEchoBack?: boolean
 }
@@ -62,7 +62,7 @@ export default class CLI {
      * @param command string name of the command
      */
     hasStartupCommand(command: string): boolean {
-        return this.args._.filter( n => n === command ).length > 0;
+        return this.args._.filter(n => n === command).length > 0;
     }
 
     /**
@@ -78,7 +78,7 @@ export default class CLI {
             value = this.args[name[0]];
         }
 
-        return value !== null? value : defaultValue;
+        return value !== null ? value : defaultValue;
     }
 
     /**
@@ -95,9 +95,9 @@ export default class CLI {
         return process.stdout.write.bind(process.stdout)(msg);
     }
 
-    read(question: string, password=false): Promise<string> {
+    read(question: string, password = false): Promise<string> {
         return new Promise<string>((resolve) => {
-            let answer = readlineSync.question(question, {hideEchoBack: password});
+            let answer = readlineSync.question(question, { hideEchoBack: password });
             resolve(answer);
         });
     }

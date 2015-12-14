@@ -11,13 +11,13 @@ export interface SyncConfig {
     "localPath": string;
     "remotePath": string;
     "privateKey"?: string;
-    "ignores"?: Array<string|RegExp>;
+    "ignores"?: Array<string | RegExp>;
     "pathMode"?: string;
 }
 
 export const CONFIG_FILE_NAME = "sync-config.json";
 
-export default class Config implements SyncConfig{
+export default class Config implements SyncConfig {
     private _filename: string;
     private _config: SyncConfig;
 
@@ -29,14 +29,14 @@ export default class Config implements SyncConfig{
     localPath: string;
     remotePath: string;
     privateKey: string;
-    ignores: Array<string|RegExp>;
+    ignores: Array<string | RegExp>;
     pathMode: string = "0755";
 
     constructor(private cli: CLI) {
         this._filename = pathJoin(process.cwd(), this.cli.getArgument("config", CONFIG_FILE_NAME));
     }
 
-    ready(): Promise<void>{
+    ready(): Promise<void> {
         return new Promise<void>((resolve) => {
             this._fetch();
             this._expand();
@@ -59,7 +59,7 @@ export default class Config implements SyncConfig{
             if (configraw = readFileSync(this._filename)) {
                 try {
                     this._config = parse(configraw.toString());
-                } catch(e) {
+                } catch (e) {
                     this.cli.usage("Could not parse DB file. Make sure JSON is correct", EXIT_CODE.RUNTIME_FAILURE);
                 }
             } else {
@@ -75,8 +75,8 @@ export default class Config implements SyncConfig{
      */
     private _expand() {
         ["host", "port", "username", "password", "pathMode",
-         "localPath", "remotePath", "ignores", "privateKey"].forEach(prop => {
-             this[prop] = this._config[prop] || this[prop];
-         });
+            "localPath", "remotePath", "ignores", "privateKey"].forEach(prop => {
+                this[prop] = this._config[prop] || this[prop];
+            });
     }
 }

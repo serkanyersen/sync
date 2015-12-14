@@ -13,9 +13,9 @@ export default class Watcher {
         private config: Config,
         private cli: CLI,
         private base: string = process.cwd()
-        ) {
+    ) {
 
-        let defaultIgnores:Array<string|RegExp> = [/node_modules/, /.git/, /.svn/, /bower_components/];
+        let defaultIgnores: Array<string | RegExp> = [/node_modules/, /.git/, /.svn/, /bower_components/];
 
         this.files = chokidar.watch(base, {
             ignored: defaultIgnores.concat(this.config.ignores),
@@ -34,7 +34,7 @@ export default class Watcher {
         });
     }
 
-    all = (event:string, path:string) => {
+    all = (event: string, path: string) => {
 
         let eventToWord = {
             add: chalk.green("ADDED"),

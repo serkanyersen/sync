@@ -7,7 +7,7 @@ import CLI from "./CLI";
 export default class Uploader {
     client: Client;
 
-    constructor(private config: Config, private cli: CLI) {}
+    constructor(private config: Config, private cli: CLI) { }
 
     connect(): Promise<string> {
         this.client = new Client({
@@ -15,7 +15,7 @@ export default class Uploader {
             host: this.config.host,
             username: this.config.username,
             password: this.config.password,
-            privateKey: this.config.privateKey? readFileSync(this.config.privateKey).toString() : undefined,
+            privateKey: this.config.privateKey ? readFileSync(this.config.privateKey).toString() : undefined,
             // debug: true
         });
 
@@ -86,8 +86,8 @@ export default class Uploader {
             // in windows it might mean we won't have permissons to save the fileName
             // So I create the folder manually here to solve that issue.
             // Mode we set can be configured from the config file
-            this.client.mkdir(upath.dirname(remote), {mode: this.config.pathMode}, err => {
-                if(err) {
+            this.client.mkdir(upath.dirname(remote), { mode: this.config.pathMode }, err => {
+                if (err) {
                     reject({
                         message: `Could not create ${ upath.dirname(remote) }`,
                         error: err
