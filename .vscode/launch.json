@@ -3,6 +3,7 @@
 	// List of configurations. Add new configurations or edit existing ones.
 	"configurations": [
 		{
+            "request": "launch",
 			// Name of configuration; appears in the launch configuration drop down menu.
 			"name": "Launch sync.js",
 			// Type of configuration.
@@ -29,6 +30,7 @@
 			"outDir": "dist/"
 		},
 		{
+            "request": "attach",
 			"name": "Attach",
 			"type": "node",
 			// TCP/IP address. Default is "localhost".
