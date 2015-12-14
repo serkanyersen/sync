@@ -27,7 +27,7 @@ export enum EXIT_CODE {
 export default class CLI {
 
     private rline: readline.ReadLine;
-    private pdTime: NodeJS.Timer;
+    private pdTime: Array<NodeJS.Timer> = [];
     private lastRun: number;
     private timeDiff: number;
     private args: minimist.ParsedArgs;
@@ -99,16 +99,16 @@ export default class CLI {
      * Start printing dots to screen, show script is working
      */
     startProgress() {
-        this.pdTime = setInterval(() => {
+        this.pdTime.push(setInterval(() => {
             this.write(chalk.green("."));
-        }, 200);
+        }, 200));
     }
 
     /**
      * Stop printing dots when process ends
      */
     stopProgress() {
-        clearInterval(this.pdTime);
+        clearInterval(this.pdTime.pop());
     }
 
     /**

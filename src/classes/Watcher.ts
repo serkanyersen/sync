@@ -1,4 +1,5 @@
-import * as chokidar from "chokidar";
+import * as chokidar from "chokidar"
+import * as chalk from "chalk";
 import { FSWatcher } from "fs";
 import Uploader from "./Uploader";
 import Config from "./Config";
@@ -34,37 +35,57 @@ export default class Watcher {
     }
 
     all = (event:string, path:string) => {
-        // console.log(event,": ", path);
+
+        let eventToWord = {
+            add: chalk.green("ADDED"),
+            change: chalk.green("CHANGED"),
+            unlink: chalk.red("DELETED"),
+            unlinkDir: chalk.red("DELETED")
+        }
+
+        if (event in eventToWord) {
+            this.cli.workspace();
+            this.cli.write(`\n${eventToWord[event]} ${path}`);
+            this.cli.startProgress();
+        }
     };
 
     add = (path: string) => {
         this.uploader.uploadFile(path).then(remote => {
-            console.log(`File uploaded ${remote}`);
+            this.cli.stopProgress();
+            this.cli.write(`\nSAVED ${remote}`);
         }).catch((err) => {
+            this.cli.stopProgress();
             console.error(err.message, err.error);
         });
     };
 
     change = (path: string) => {
         this.uploader.uploadFile(path).then(remote => {
-            console.log(`File uploaded ${remote}`);
+            this.cli.stopProgress();
+            this.cli.write(`\nSAVED ${remote}`);
         }).catch((err) => {
+            this.cli.stopProgress();
             console.error(err.message, err.error);
         });
     };
 
     unlink = (path: string) => {
         this.uploader.unlinkFile(path).then(remote => {
-            console.log(`File deleted ${remote}`);
+            this.cli.stopProgress();
+            this.cli.write(`\nSAVED ${remote}`);
         }).catch((err) => {
+            this.cli.stopProgress();
             console.log(`Error deleting file ${err}`);
         });
     };
 
     unlinkDir = (path: string) => {
         this.uploader.unlinkFolder(path).then(remote => {
-            console.log(`Folder deleted ${remote}`);
+            this.cli.stopProgress();
+            this.cli.write(`\nSAVED ${remote}`);
         }).catch((err) => {
+            this.cli.stopProgress();
             console.log(`Error deleting folder ${err}`);
         });
     };
