@@ -1,6 +1,6 @@
 {
   "name": "sync.js",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "main": "dist/main.js",
   "preferGlobal": true,
   "scripts": {
@@ -17,7 +17,32 @@
     "minimist": "^1.2.0",
     "moment": "latest",
     "scp2": "^0.2.2",
-    "typescript": "^1.7.3",
+    "typescript": "1.6.2",
     "upath": "^0.1.6"
-  }
+  },
+  "description": "sync.js let's you keep your remote files in sync with your local copy. Whenever you make a change on your local project, sync.js uploads the changed files to remote server using `scp` command.",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serkanyersen/sync.git"
+  },
+  "keywords": [
+    "SFTP",
+    "sync",
+    "rsync",
+    "scp",
+    "ftp",
+    "upload",
+    "project",
+    "typescript",
+    "developer",
+    "tools",
+    "tooling"
+  ],
+  "author": "Serkan Yersen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/serkanyersen/sync/issues"
+  },
+  "homepage": "https://github.com/serkanyersen/sync#readme"
 }

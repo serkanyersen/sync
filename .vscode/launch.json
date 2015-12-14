@@ -8,11 +8,11 @@
 			// Type of configuration.
 			"type": "node",
 			// Workspace relative or absolute path to the program.
-			"program": "bin/syncjs",
+			"program": "./bin/syncjs",
 			// Automatically stop program after launch.
 			"stopOnEntry": false,
 			// Command line arguments passed to the program.
-			"args": [],
+			"args": ["-c", "config_example.json", "--no-color"],
 			// Workspace relative or absolute path to the working directory of the program being debugged. Default is the current workspace.
 			"cwd": ".",
 			// Workspace relative or absolute path to the runtime executable to be used. Default is the runtime executable on the PATH.
@@ -32,10 +32,10 @@
 			"name": "Attach",
 			"type": "node",
 			// TCP/IP address. Default is "localhost".
-			"address": "localhost",
+			// "address": "localhost",
 			// Port to attach to.
 			"port": 5858,
-			"sourceMaps": false
+			"sourceMaps": true
 		}
 	]
 }
