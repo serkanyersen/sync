@@ -1,7 +1,7 @@
 {
   "name": "sync.js",
   "version": "2.0.0",
-  "main": "dist/main.js",
+  "main": "dist/src/index.js",
   "preferGlobal": true,
   "scripts": {
     "postinstall": "./node_modules/.bin/tsc"
@@ -18,7 +18,7 @@
     "moment": "latest",
     "readline-sync": "^1.2.21",
     "scp2": "^0.2.2",
-    "typescript": "1.6.2",
+    "typescript": "^1.7.*",
     "upath": "^0.1.6"
   },
   "description": "sync.js let's you keep your remote files in sync with your local copy. Whenever you make a change on your local project, sync.js uploads the changed files to remote server using `scp` command.",

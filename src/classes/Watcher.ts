@@ -5,8 +5,15 @@ import Uploader from "./Uploader";
 import Config from "./Config";
 import CLI from "./CLI";
 
+interface PausedChanges {
+    event: string;
+    path: string;
+}
+
 export default class Watcher {
     files: FSWatcher;
+    private paused = false;
+    private changes: PausedChanges[] = [];
 
     constructor(
         private uploader: Uploader,
@@ -24,7 +31,7 @@ export default class Watcher {
 
         // Attach events
         ["all", "add", "change", "unlink", "unlinkDir"].forEach(method => {
-            this.files.on(method, this[method]);
+            this.files.on(method, this.pauseHandler(method));
         });
     }
 
@@ -34,23 +41,72 @@ export default class Watcher {
         });
     }
 
-    all = (event: string, path: string) => {
+    pause() {
+        this.paused = true;
+    }
 
-        let eventToWord = {
-            add: chalk.green("ADDED"),
-            change: chalk.green("CHANGED"),
-            unlink: chalk.red("DELETED"),
-            unlinkDir: chalk.red("DELETED")
+    resume(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.cli.write(`${ this.changes.length } files had changed while paused.`);
+            this.changes.forEach((change) => {
+                this.cli.write(`${ this.eventToWord[change.event] }: ${ change.path } `);
+                this.cli.read('Do you want to make these uploads? [Y/N] ').then((answer) => {
+                    if (answer[0].toUpperCase() === 'Y') {
+                        this.cli.write('Uploading.');
+                        resolve();
+                    } else {
+                        reject();
+                        this.cli.write('Resuming.');
+                    }
+                    // Set pause false the last thing. Even if changes happen
+                    // during this prompt is on screen. They are still caught
+                    this.paused = false;
+                });
+            });
+        });
+    }
+
+    eventToWord = {
+        add: chalk.green("ADDED"),
+        change: chalk.green("CHANGED"),
+        unlink: chalk.red("DELETED"),
+        unlinkDir: chalk.red("DELETED")
+    };
+
+
+    private pauseHandler(method: string): Function {
+        return (...args: string[]) => {
+            let path: string,
+                event = method;
+
+            // Handle argument difference
+            if (method === 'all') {
+                path = args[1];
+                event = args[0]
+            } else {
+                path = args[0];
+            }
+
+            // If paused store the values
+            if (this.paused ) {
+                this.changes.push({ event, path });
+            } else {
+                // If not, continue as ususal
+                this[method](...args);
+            }
         }
+    }
 
-        if (event in eventToWord) {
+
+    private all = (event:string, path:string) => {
+        if (event in this.eventToWord) {
             this.cli.workspace();
-            this.cli.write(`\n${eventToWord[event]} ${path}`);
+            this.cli.write(`\n${ this.eventToWord[event]} ${path}`);
             this.cli.startProgress();
         }
     };
 
-    add = (path: string) => {
+    private add = (path: string) => {
         this.uploader.uploadFile(path).then(remote => {
             this.cli.stopProgress();
             this.cli.write(`\nSAVED ${remote}`);
@@ -60,7 +116,7 @@ export default class Watcher {
         });
     };
 
-    change = (path: string) => {
+    private change = (path: string) => {
         this.uploader.uploadFile(path).then(remote => {
             this.cli.stopProgress();
             this.cli.write(`\nSAVED ${remote}`);
@@ -70,7 +126,7 @@ export default class Watcher {
         });
     };
 
-    unlink = (path: string) => {
+    private unlink = (path: string) => {
         this.uploader.unlinkFile(path).then(remote => {
             this.cli.stopProgress();
             this.cli.write(`\nSAVED ${remote}`);
@@ -80,7 +136,7 @@ export default class Watcher {
         });
     };
 
-    unlinkDir = (path: string) => {
+    private unlinkDir = (path: string) => {
         this.uploader.unlinkFolder(path).then(remote => {
             this.cli.stopProgress();
             this.cli.write(`\nSAVED ${remote}`);
