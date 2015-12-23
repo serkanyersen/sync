@@ -1,7 +1,6 @@
 import * as chalk from "chalk";
 import * as readline from "readline";
 import * as minimist from "minimist";
-var readlineSync = require("readline-sync");
 
 export enum EXIT_CODE {
     /**
@@ -25,11 +24,6 @@ export enum EXIT_CODE {
     INVALID_ARGUMENT = 128
 }
 
-interface ReadLineOptions {
-    follow?: string;
-    hideEchoBack?: boolean
-}
-
 export default class CLI {
 
     private rline: readline.ReadLine;
@@ -43,6 +37,17 @@ export default class CLI {
     constructor() {
         // Parse arguments
         this.args = minimist(process.argv.slice(2));
+
+        try {
+            this.rline = readline.createInterface({
+                input: process.stdin,
+                output: process.stdout
+            });
+        } catch (e) {
+            this.write("You need to upgrade your nodejs\n");
+            this.write("http://slopjong.de/2012/10/31/how-to-install-the-latest-nodejs-in-ubuntu/\n");
+            process.exit(EXIT_CODE.RUNTIME_FAILURE);
+        }
     }
 
     /**
@@ -85,8 +90,7 @@ export default class CLI {
 
     read(question: string, password = false): Promise<string> {
         return new Promise<string>((resolve) => {
-            let answer = readlineSync.question(question, { hideEchoBack: password });
-            resolve(answer);
+            this.rline.question(question, resolve);
         });
     }
 
