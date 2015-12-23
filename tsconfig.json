@@ -6,7 +6,7 @@
     "emitDecoratorMetadata": true,
     "inlineSourceMap": true,
     "noImplicitAny": false,
-    "rootDir": ".",
+    "rootDir": "./src",
     "outDir": "./dist"
   },
   "buildOnSave": true,

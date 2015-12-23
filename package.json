@@ -4,18 +4,16 @@
   "main": "dist/index.js",
   "preferGlobal": true,
   "scripts": {
-    "postinstall": "./node_modules/.bin/gulp"
+    "postinstall": "tsc && babel dist -d dist"
   },
   "bin": {
     "syncjs": "bin/syncjs"
   },
   "dependencies": {
+    "babel-cli": "^6.3.17",
     "babel-preset-es2015": "^6.3.13",
     "chalk": "^1.1.1",
     "chokidar": "^1.2.0",
-    "gulp": "^3.9.0",
-    "gulp-babel": "^6.1.1",
-    "gulp-typescript": "^2.10.0",
     "jsonplus": "^1.2.1",
     "minimist": "^1.2.0",
     "moment": "latest",
