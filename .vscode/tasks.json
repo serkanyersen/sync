@@ -7,23 +7,23 @@
 // ${cwd}: the current working directory of the spawned process
 
 {
-	"version": "0.1.0",
+    "version": "0.1.0",
 
-	// The command is tsc. Assumes that tsc has been installed using npm install -g typescript
-	"command": "npm",
+    // The command is tsc. Assumes that tsc has been installed using npm install -g typescript
+    "command": "npm",
 
-	// The command is a shell script
-	"isShellCommand": true,
+    // The command is a shell script
+    "isShellCommand": true,
 
-	// Show the output window only if unrecognized errors occur.
-	"showOutput": "silent",
+    // Show the output window only if unrecognized errors occur.
+    "showOutput": "silent",
 
     // Tell the tsc compiler to use the tsconfig.json from the open folder.
-	"args": ["run", "postinstall"],
+    "args": ["run", "postinstall"],
 
-	// use the standard tsc problem matcher to find compile problems
-	// in the output.
-	"problemMatcher": "$tsc"
+    // use the standard tsc problem matcher to find compile problems
+    // in the output.
+    "problemMatcher": "$tsc"
 }
 
 // {

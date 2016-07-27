@@ -9,13 +9,13 @@
 			// Type of configuration.
 			"type": "node",
 			// Workspace relative or absolute path to the program.
-			"program": "./bin/syncjs",
+			"program": "${workspaceRoot}/bin/syncjs",
 			// Automatically stop program after launch.
 			"stopOnEntry": false,
 			// Command line arguments passed to the program.
 			"args": ["-c", "config_example.json", "--no-color"],
 			// Workspace relative or absolute path to the working directory of the program being debugged. Default is the current workspace.
-			"cwd": ".",
+			"cwd": "${workspaceRoot}",
 			// Workspace relative or absolute path to the runtime executable to be used. Default is the runtime executable on the PATH.
 			"runtimeExecutable": null,
 			// Optional arguments passed to the runtime executable.
@@ -27,7 +27,7 @@
 			// Use JavaScript source maps (if they exist).
 			"sourceMaps": true,
 			// If JavaScript source maps are enabled, the generated code is expected in this directory.
-			"outDir": "dist/"
+			"outDir": "${workspaceRoot}/dist/"
 		},
 		{
             "request": "attach",
