@@ -8,6 +8,8 @@ declare module "scp2" {
         password?: string;
         paths?: string;
         privateKey?: string;
+        agentForward?: boolean;
+        agent?: string;
         debug?: boolean;
     }
 

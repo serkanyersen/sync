@@ -1,4 +1,16 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-    "javascript.validate.lint.newOnLowercaseFunctions": "ignore"
+    "files.trimTrailingWhitespace": true,
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/dist": true,
+        "**/typings": true
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.DS_Store": true,
+        "**/dist/*": true
+    }
 }

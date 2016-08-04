@@ -1,5 +1,5 @@
 {
     "presets": ["es2015"],
-    "compact": true,
+    "compact": false,
     "comments": false
 }
