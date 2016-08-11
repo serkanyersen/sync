@@ -14,7 +14,7 @@ export default class Sync {
         this.cli = new CLI();
 
         if (this.cli.hasStartupCommand("init")) {
-            new InitConfig(this.cli);
+            new InitConfig();
         } else {
             // Get config
             this.config = new Config(this.cli);

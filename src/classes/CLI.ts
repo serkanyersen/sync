@@ -1,6 +1,6 @@
 import * as chalk from "chalk";
-import * as readline from "readline";
 import * as minimist from "minimist";
+import inquirer = require("inquirer");
 
 export enum EXIT_CODE {
     /**
@@ -26,7 +26,6 @@ export enum EXIT_CODE {
 
 export default class CLI {
 
-    private rline: readline.ReadLine;
     private pdTime: Array<NodeJS.Timer> = [];
     private lastRun: number;
     private timeDiff: number;
@@ -37,17 +36,6 @@ export default class CLI {
     constructor() {
         // Parse arguments
         this.args = minimist(process.argv.slice(2));
-
-        try {
-            this.rline = readline.createInterface({
-                input: process.stdin,
-                output: process.stdout
-            });
-        } catch (e) {
-            this.write("You need to upgrade your nodejs\n");
-            this.write("http://slopjong.de/2012/10/31/how-to-install-the-latest-nodejs-in-ubuntu/\n");
-            process.exit(EXIT_CODE.RUNTIME_FAILURE);
-        }
     }
 
     /**
@@ -88,9 +76,17 @@ export default class CLI {
         return process.stdout.write.bind(process.stdout)(msg);
     }
 
-    read(question: string, password = false): Promise<string> {
-        return new Promise<string>((resolve) => {
-            this.rline.question(question, resolve);
+    read(question: any, hidden = false): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            let scheme = {
+                type: hidden? "password" : "input",
+                message: question,
+                name: "response"
+            };
+
+            inquirer.prompt(scheme).then((answer) => {
+                resolve(answer.response);
+            });
         });
     }
 

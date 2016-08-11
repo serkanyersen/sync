@@ -3,91 +3,128 @@ import * as upath from "upath";
 import { writeFileSync } from 'fs';
 import CLI, { EXIT_CODE } from "./CLI";
 import { SyncConfig, CONFIG_FILE_NAME } from './Config';
+import inquirer = require("inquirer");
 
-interface PromptOptions {
-    leaveEmpty?: boolean;
-    useDefault?: boolean;
-    required?: boolean;
-}
+export default class InitConfig2 {
 
-export default class InitConfig {
+    constructor() {
 
-    constructor(private cli: CLI) {
-        this.collectInformation();
-    }
+        let currentConf = <SyncConfig>{};
 
-    private getPrompt(question: string, options: PromptOptions = {}): string {
-        let leaveEmpty = chalk.gray(" [hit enter to leave empty]");
-        let useDefault = chalk.gray(" [hit enter to use default]");
-        let required = chalk.red(" [required]");
-        let marker = "";
+        try {
+            currentConf = require(upath.resolve(process.cwd(), CONFIG_FILE_NAME));
+            console.log("Existing config found.");
+        } catch(e) {}
 
-        if (options.leaveEmpty) {
-            marker += leaveEmpty;
-        }
-
-        if (options.useDefault) {
-            marker += useDefault;
-        }
-
-        if (options.required) {
-            marker += required;
-        }
-
-        return `${chalk.green(question)}${marker}:\n>>> `;
-    }
-
-    collectInformation(): void {
-        let newConfig: SyncConfig = { localPath: null, remotePath: null, host: null };
-
-        this.cli.read(this.getPrompt("Username to connect", { leaveEmpty: true })).then(answer => {
-            if (answer) {
-                newConfig.username = answer;
+        let questions: inquirer.Questions = [
+            {
+                type: "input",
+                name: "username",
+                message: "Username to connect:",
+                validate: (answer) => {
+                    if (!answer) {
+                        return "Username is required";
+                    }
+                    return true;
+                },
+                default: currentConf.username
+            },
+            {
+                type: "list",
+                name: "authType",
+                message: "How do you want to authenticate:",
+                choices: [
+                    "Password in config",
+                    "Ask password during connection",
+                    "Private key"
+                ]
+            },
+            {
+                type: "password",
+                name: "password",
+                message: "Enter your password:",
+                when: (answers: any) => answers.authType === "Password in config"
+            },
+            {
+                type: "input",
+                name: "privateKey",
+                message: "Path to private key:",
+                default: currentConf.privateKey,
+                when: (answers: any) => answers.authType === "Private key",
+                filter: (answer) => {
+                    return upath.normalizeSafe(answer);
+                }
+            },
+            {
+                type: "input",
+                name: "host",
+                default: currentConf.host,
+                message: "Hostname or IP to connect",
+                validate: (answer) => {
+                    if (!answer) {
+                        return "Hostname is required";
+                    }
+                    return true;
+                }
+            },
+            {
+                type: "input",
+                name: "port",
+                message: "Port to conenct:",
+                default: currentConf.port || "use default"
+            },
+            {
+                type: "input",
+                name: "localPath",
+                message: "Local Path",
+                filter: (answer) => {
+                    return upath.normalizeSafe(answer);
+                },
+                default: currentConf.localPath || process.cwd()
+            },
+            {
+                type: "input",
+                name: "remotePath",
+                message: "Remote Path",
+                default: currentConf.remotePath,
+                validate: (answer) => {
+                    if (!answer) {
+                        return "Remote Path is required";
+                    }
+                    return true;
+                }
             }
-            return this.cli.read(this.getPrompt("Password to connect", { leaveEmpty: true }));
-        }).then(answer => {
-            if (answer) {
-                newConfig.password = answer;
-            }
-            return this.cli.read(this.getPrompt("Port number to connect", { leaveEmpty: true }));
-        }).then(answer => {
-            if (Number(answer)) {
-                newConfig.port = Number(answer);
-            }
-            return this.cli.read(this.getPrompt("Domain or ip address to connect", { required: true }));
-        }).then(answer => {
-            if (answer) {
-                newConfig.host = answer;
-            }
-            return this.cli.read(this.getPrompt(`Local Path: [${process.cwd() }]`, { useDefault: true }));
-        }).then(answer => {
-            if (answer) {
-                newConfig.localPath = upath.normalizeSafe(answer);
-            } else {
-                newConfig.localPath = upath.normalizeSafe(process.cwd());
-            }
-            return this.cli.read(this.getPrompt("Remote Path", { required: true }));
-        }).then(answer => {
-            if (answer) {
-                newConfig.remotePath = answer;
-            }
-            return this.cli.read(this.getPrompt("Path to privateKey if any", { leaveEmpty: true }));
-        }).then(answer => {
-            if (answer) {
-                newConfig.privateKey = upath.normalizeSafe(answer);
-            }
-            return this.cli.read(this.getPrompt(`Does this look good?"
-                                 \n${JSON.stringify(newConfig, null, 4) }
-                                 \n${chalk.green("Say [yes] or [no]") }`));
-        }).then((answer) => {
-            if (answer.toLowerCase() === 'yes' || answer.toLowerCase() === 'y') {
-                writeFileSync(CONFIG_FILE_NAME, JSON.stringify(newConfig, null, 4), 'utf8');
-                this.cli.write(`${CONFIG_FILE_NAME} is saved.\n`);
-            } else {
-                this.cli.write("Operation cancelled. Exiting...");
+        ];
+
+        inquirer.prompt(questions).then((answers) => {
+            let pass;
+            // if default, don't put it in config
+            if (answers.port == "use default") {
+                delete answers.port;
             }
 
-            process.exit(EXIT_CODE.NORMAL);
+            // no need this in the config
+            delete answers.authType;
+
+            if (answers.password) {
+                pass = answers.password;
+                answers.password = "****";
+            }
+
+            inquirer.prompt({
+                type: "confirm",
+                name: "yes",
+                message: `${JSON.stringify(answers, null, 4)}\nDoes this look good?`
+            }).then((answer) => {
+                if (answer.yes) {
+                    if (pass) {
+                        answers.password = pass;
+                    }
+                    writeFileSync(CONFIG_FILE_NAME, JSON.stringify(answers, null, 4), 'utf8');
+                } else {
+                    console.log("No config was saved.");
+                }
+            })
         });
     }
 }
