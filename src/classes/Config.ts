@@ -43,7 +43,7 @@ export default class Config implements SyncConfig {
 
             // Temporary
             if (!this.password && !this.privateKey) {
-                this.cli.read("Enter password to connect", true).then(answer => {
+                this.cli.read("Enter password to connect:", true).then(answer => {
                     this.password = this._config.password = answer;
                     resolve();
                 });

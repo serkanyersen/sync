@@ -30,12 +30,15 @@ export default class CLI {
     private lastRun: number;
     private timeDiff: number;
     private args: minimist.ParsedArgs;
+    // private ui: inquirer.ui.BottomBar;
+    private activePrompt;
 
     public paused: boolean;
 
     constructor() {
         // Parse arguments
         this.args = minimist(process.argv.slice(2));
+        // this.ui = new inquirer.ui.BottomBar();
     }
 
     /**
@@ -76,6 +79,11 @@ export default class CLI {
         return process.stdout.write.bind(process.stdout)(msg);
     }
 
+    log(message: string) {
+        // this.ui.updateBottomBar(message);
+        console.log(message);
+    }
+
     read(question: any, hidden = false): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             let scheme = {
@@ -84,7 +92,7 @@ export default class CLI {
                 name: "response"
             };
 
-            inquirer.prompt(scheme).then((answer) => {
+            this.ui.prompt(scheme).then((answer) => {
                 resolve(answer.response);
             });
         });
@@ -143,8 +151,18 @@ export default class CLI {
      * Display the prompt that asks for input
      */
     private showPrompt() {
-        this.read(">>> ").then(answer => {
+        if (this.activePrompt) {
+            // this.ui.close();
+            //console.log(this.activePrompt);
+            //this.activePrompt.ui.rl.emit("serkan")
+            return true;
+        }
+
+
+        this.activePrompt = this.read(">>> ");
+        this.activePrompt.then(answer => {
             this.handleInput(answer);
+            this.activePrompt = false;
             // as soon as a command is run, show promt again just a like a real shell
             this.showPrompt();
         });

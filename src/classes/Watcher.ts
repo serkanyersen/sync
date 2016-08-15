@@ -100,8 +100,8 @@ export default class Watcher {
 
     private all = (event:string, path:string) => {
         if (event in this.eventToWord) {
-            this.cli.workspace();
-            this.cli.write(`\n${ this.eventToWord[event]} ${path}`);
+            // this.cli.workspace();
+            this.cli.log(`\n${ this.eventToWord[event]} ${path.replace(this.config.localPath, "").replace(this.config.remotePath, "")}`);
             this.cli.startProgress();
         }
     };
@@ -109,7 +109,7 @@ export default class Watcher {
     private add = (path: string) => {
         this.uploader.uploadFile(path).then(remote => {
             this.cli.stopProgress();
-            this.cli.write(`\nSAVED ${remote}`);
+            // this.cli.log(`\nSAVED ${remote.replace(this.config.remotePath, "")}`);
         }).catch((err) => {
             this.cli.stopProgress();
             console.error(err.message, err.error);
@@ -119,30 +119,36 @@ export default class Watcher {
     private change = (path: string) => {
         this.uploader.uploadFile(path).then(remote => {
             this.cli.stopProgress();
-            this.cli.write(`\nSAVED ${remote}`);
+            // this.cli.log(`\nSAVED ${remote.replace(this.config.remotePath, "")}`);
+            // this.cli.workspace();
         }).catch((err) => {
             this.cli.stopProgress();
             console.error(err.message, err.error);
+            // this.cli.workspace();
         });
     };
 
     private unlink = (path: string) => {
         this.uploader.unlinkFile(path).then(remote => {
             this.cli.stopProgress();
-            this.cli.write(`\nSAVED ${remote}`);
+            // this.cli.log(`\nSAVED ${remote.replace(this.config.remotePath, "")}`);
+            // this.cli.workspace();
         }).catch((err) => {
             this.cli.stopProgress();
             console.log(`Error deleting file ${err}`);
+            // this.cli.workspace();
         });
     };
 
     private unlinkDir = (path: string) => {
         this.uploader.unlinkFolder(path).then(remote => {
             this.cli.stopProgress();
-            this.cli.write(`\nSAVED ${remote}`);
+            // this.cli.log(`\nSAVED ${remote.replace(this.config.remotePath, "")}`);
+            // this.cli.workspace();
         }).catch((err) => {
             this.cli.stopProgress();
             console.log(`Error deleting folder ${err}`);
+            // this.cli.workspace();
         });
     };
 }
