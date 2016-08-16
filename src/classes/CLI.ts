@@ -30,9 +30,9 @@ export default class CLI {
     private lastRun: number;
     private timeDiff: number;
     private args: minimist.ParsedArgs;
-    // private ui: inquirer.ui.BottomBar;
+    private ui: inquirer.ui.Prompt[] = [];
     private activePrompt;
-
+    private pauseEvents: Function[] = [];
     public paused: boolean;
 
     constructor() {
@@ -65,6 +65,10 @@ export default class CLI {
         return value !== null ? value : defaultValue;
     }
 
+    onPaused(event) {
+        this.pauseEvents.push(event);
+    }
+
     /**
      * Clear the terminal
      */
@@ -82,19 +86,33 @@ export default class CLI {
     log(message: string) {
         // this.ui.updateBottomBar(message);
         console.log(message);
+        // this.showPrompt();
     }
 
     read(question: any, hidden = false): Promise<any> {
-        return new Promise<any>((resolve, reject) => {
-            let scheme = {
-                type: hidden? "password" : "input",
-                message: question,
-                name: "response"
-            };
+        let scheme = {
+            type: hidden? "password" : "input",
+            message: question,
+            name: "response"
+        };
 
-            this.ui.prompt(scheme).then((answer) => {
-                resolve(answer.response);
-            });
+        let promise = inquirer.prompt(scheme);
+        this.ui.push(promise['ui']);
+
+        return promise.then((answer) => {
+            return answer.response;
+        });
+    }
+
+    closePrompts() {
+        this.ui.map((ui) => {
+            if (!ui['closed']) {
+                ui.close();
+                ui['closed'] = true;
+                //console.log("closed now")
+            } else {
+                //console.log("closed Already")
+            }
         });
     }
 
@@ -118,17 +136,12 @@ export default class CLI {
      * Display the workspace for syncjs
      */
     workspace() {
-        this.clear();
+        // this.clear();
 
-        if (this.paused) {
-            this.write(`Currently paused, type "${ chalk.green("resume") }" to start again.\n`);
-        } else {
-            this.write(`Started monitoring \n`);
-        }
-
-        this.write(`Quit the script with CONTROL-C or type "${ chalk.green("exit") }".\n`);
+        this.write(`Started monitoring \n`);
+        this.write(`Quit the script with CONTROL-C".\n`);
         this.write(chalk.magenta("-----------------------------------------------------------\n"));
-        this.showPrompt();
+        // this.showPrompt();
     }
 
     usage(message: string = null, code: number = 0): void {
@@ -152,12 +165,8 @@ export default class CLI {
      */
     private showPrompt() {
         if (this.activePrompt) {
-            // this.ui.close();
-            //console.log(this.activePrompt);
-            //this.activePrompt.ui.rl.emit("serkan")
-            return true;
+            this.closePrompts();
         }
-
 
         this.activePrompt = this.read(">>> ");
         this.activePrompt.then(answer => {
@@ -194,6 +203,9 @@ export default class CLI {
                 break;
             case "pause":
                 this.paused = true;
+                this.pauseEvents.map((ev) => {
+                    ev(this.paused);
+                });
                 this.workspace();
                 break;
             case "resume":
@@ -207,7 +219,9 @@ export default class CLI {
                     if (arg1 == "-u") {
                         this.write("Finding all changed files while waiting.\n");
                     }
-                    // this.startChecking();
+                    this.pauseEvents.map((ev) => {
+                        ev(this.paused);
+                    });
                 } else {
                     this.write("Already running\n");
                 }
@@ -218,3 +232,4 @@ export default class CLI {
         }
     }
 }
+

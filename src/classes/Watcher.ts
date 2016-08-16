@@ -4,16 +4,11 @@ import { FSWatcher } from "fs";
 import Uploader from "./Uploader";
 import Config from "./Config";
 import CLI from "./CLI";
-
-interface PausedChanges {
-    event: string;
-    path: string;
-}
+const observatory = require("observatory");
 
 export default class Watcher {
     files: FSWatcher;
-    private paused = false;
-    private changes: PausedChanges[] = [];
+    private tasks = {};
 
     constructor(
         private uploader: Uploader,
@@ -31,38 +26,13 @@ export default class Watcher {
 
         // Attach events
         ["all", "add", "change", "unlink", "unlinkDir"].forEach(method => {
-            this.files.on(method, this.pauseHandler(method));
+            this.files.on(method, this.handler(method));
         });
     }
 
     ready(): Promise<void> {
         return new Promise<void>((resolve) => {
             this.files.on("ready", resolve);
-        });
-    }
-
-    pause() {
-        this.paused = true;
-    }
-
-    resume(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            this.cli.write(`${ this.changes.length } files had changed while paused.`);
-            this.changes.forEach((change) => {
-                this.cli.write(`${ this.eventToWord[change.event] }: ${ change.path } `);
-                this.cli.read('Do you want to make these uploads? [Y/N] ').then((answer) => {
-                    if (answer[0].toUpperCase() === 'Y') {
-                        this.cli.write('Uploading.');
-                        resolve();
-                    } else {
-                        reject();
-                        this.cli.write('Resuming.');
-                    }
-                    // Set pause false the last thing. Even if changes happen
-                    // during this prompt is on screen. They are still caught
-                    this.paused = false;
-                });
-            });
         });
     }
 
@@ -73,8 +43,7 @@ export default class Watcher {
         unlinkDir: chalk.red("DELETED")
     };
 
-
-    private pauseHandler(method: string): Function {
+    private handler(method: string): Function {
         return (...args: string[]) => {
             let path: string,
                 event = method;
@@ -87,68 +56,51 @@ export default class Watcher {
                 path = args[0];
             }
 
-            // If paused store the values
-            if (this.paused ) {
-                this.changes.push({ event, path });
-            } else {
-                // If not, continue as ususal
-                this[method](...args);
-            }
+            // If not, continue as ususal
+            this[method](...args);
         }
     }
 
-
     private all = (event:string, path:string) => {
         if (event in this.eventToWord) {
-            // this.cli.workspace();
-            this.cli.log(`\n${ this.eventToWord[event]} ${path.replace(this.config.localPath, "").replace(this.config.remotePath, "")}`);
-            this.cli.startProgress();
+            this.tasks[path] = observatory.add(this.eventToWord[event]);
+            this.tasks[path].status("Uploading").details(path.replace(this.config.localPath, ""));
         }
     };
 
     private add = (path: string) => {
         this.uploader.uploadFile(path).then(remote => {
-            this.cli.stopProgress();
-            // this.cli.log(`\nSAVED ${remote.replace(this.config.remotePath, "")}`);
+            this.tasks[path].done("Done");
         }).catch((err) => {
-            this.cli.stopProgress();
+            this.tasks[path].fail("Fail");
             console.error(err.message, err.error);
         });
     };
 
     private change = (path: string) => {
         this.uploader.uploadFile(path).then(remote => {
-            this.cli.stopProgress();
-            // this.cli.log(`\nSAVED ${remote.replace(this.config.remotePath, "")}`);
-            // this.cli.workspace();
+            this.tasks[path].done("Done");
         }).catch((err) => {
-            this.cli.stopProgress();
+            this.tasks[path].fail("Fail");
             console.error(err.message, err.error);
-            // this.cli.workspace();
         });
     };
 
     private unlink = (path: string) => {
         this.uploader.unlinkFile(path).then(remote => {
-            this.cli.stopProgress();
-            // this.cli.log(`\nSAVED ${remote.replace(this.config.remotePath, "")}`);
-            // this.cli.workspace();
+            this.tasks[path].done("Done");
         }).catch((err) => {
-            this.cli.stopProgress();
+            this.tasks[path].fail("Fail");
             console.log(`Error deleting file ${err}`);
-            // this.cli.workspace();
         });
     };
 
     private unlinkDir = (path: string) => {
         this.uploader.unlinkFolder(path).then(remote => {
-            this.cli.stopProgress();
-            // this.cli.log(`\nSAVED ${remote.replace(this.config.remotePath, "")}`);
-            // this.cli.workspace();
+            this.tasks[path].done("Done");
         }).catch((err) => {
-            this.cli.stopProgress();
+            this.tasks[path].fail("Fail");
             console.log(`Error deleting folder ${err}`);
-            // this.cli.workspace();
         });
     };
 }
