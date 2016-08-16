@@ -63,8 +63,8 @@ export default class Watcher {
 
     private all = (event:string, path:string) => {
         if (event in this.eventToWord) {
-            this.tasks[path] = observatory.add(this.eventToWord[event]);
-            this.tasks[path].status("Uploading").details(path.replace(this.config.localPath, ""));
+            this.tasks[path] = observatory.add(this.eventToWord[event] + " " + path.replace(this.config.localPath, ""));
+            this.tasks[path].status("Uploading");
         }
     };
 
