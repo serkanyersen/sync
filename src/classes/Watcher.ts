@@ -72,8 +72,7 @@ export default class Watcher {
         this.uploader.uploadFile(path).then(remote => {
             this.tasks[path].done("Done");
         }).catch((err) => {
-            this.tasks[path].fail("Fail");
-            console.error(err.message, err.error);
+            this.tasks[path].fail("Fail").details(err.message);
         });
     };
 
@@ -81,8 +80,7 @@ export default class Watcher {
         this.uploader.uploadFile(path).then(remote => {
             this.tasks[path].done("Done");
         }).catch((err) => {
-            this.tasks[path].fail("Fail");
-            console.error(err.message, err.error);
+            this.tasks[path].fail("Fail").details(err.message);
         });
     };
 
@@ -90,8 +88,7 @@ export default class Watcher {
         this.uploader.unlinkFile(path).then(remote => {
             this.tasks[path].done("Done");
         }).catch((err) => {
-            this.tasks[path].fail("Fail");
-            console.log(`Error deleting file ${err}`);
+            this.tasks[path].fail("Fail").details(`Error deleting file ${err}`);
         });
     };
 
@@ -99,8 +96,7 @@ export default class Watcher {
         this.uploader.unlinkFolder(path).then(remote => {
             this.tasks[path].done("Done");
         }).catch((err) => {
-            this.tasks[path].fail("Fail");
-            console.log(`Error deleting folder ${err}`);
+            this.tasks[path].fail("Fail").details(`Error deleting folder ${err}`);
         });
     };
 }
