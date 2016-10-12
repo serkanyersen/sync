@@ -18,6 +18,7 @@
     "jsonplus": "^1.2.1",
     "minimist": "^1.2.0",
     "moment": "2.14.1",
+    "observatory": "^1.0.0",
     "prompt": "^1.0.0",
     "scp2": "^0.5.0",
     "upath": "^0.2.0"
