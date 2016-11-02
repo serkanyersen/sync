@@ -79,7 +79,7 @@ export default class CLI {
     /**
      * Write something to terminal
      */
-    write(msg: string | Chalk.ChalkChain): boolean {
+    write(msg: string | chalk.ChalkChain): boolean {
         return process.stdout.write.bind(process.stdout)(msg);
     }
 
@@ -96,7 +96,8 @@ export default class CLI {
             name: "response"
         };
 
-        let promise = inquirer.prompt(scheme);
+        // Bad type definition
+        let promise = <any>inquirer.prompt(scheme);
         this.ui.push(promise['ui']);
 
         return promise.then((answer) => {

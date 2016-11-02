@@ -96,7 +96,7 @@ export default class InitConfig2 {
             }
         ];
 
-        inquirer.prompt(questions).then((answers) => {
+        inquirer.prompt(questions)['then']((answers) => {
             let pass;
             // if default, don't put it in config
             if (answers.port == "use default") {
@@ -115,7 +115,7 @@ export default class InitConfig2 {
                 type: "confirm",
                 name: "yes",
                 message: `${JSON.stringify(answers, null, 4)}\nDoes this look good?`
-            }).then((answer) => {
+            })['then']((answer) => {
                 if (answer.yes) {
                     if (pass) {
                         answers.password = pass;
