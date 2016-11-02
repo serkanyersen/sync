@@ -1,79 +1,60 @@
-## Sync.js - Upload changed local files to remote server
-sync.js let's you keep your remote files in sync with your local copy. Whenever you make a change on your local project, sync.js uploads the changed files to remote server using `scp` command.
+Syncjs - Upload changed local files to remote server
+----------------------------------------------------
 
-When configured correctly, it works really fast because sync.js leverages [openSSH master connection settings](http://protempore.net/~calvins/howto/ssh-connection-sharing/). That means instead of creating new connections for each upload, sync.js keeps one connection open and uses it for all uploads.
+Syncjs is an easy to use command line tool for uploading your local changes to a remote server.
 
-![How it works](http://i.imgur.com/weaaKqh.gif "How it works")
+It's useful in situations where your application needs to be on a remote server to run (dev machines, pubdev environments, etc.) but you still want to use your local environment for development. You can simply map you local copy of the project to the remote version and syncjs will do the rest.
 
-### Why did I do this? Aren't there already tools doing the same exact thing?
-Yes there are. However, none of them fulfills my needs. I use Sublime Text 2 and occasionally VIM. ST2 has `SFTP` plugin 
-~~but it doesn't have ST3 support yet~~, also it doesn't upload files when they changed via other editors.
+![Syncjs](http://i.imgur.com/rLNUErv.gif, "syncjs")
 
-I tried `unison` but it kills the CPU and syncs remote to local too. Configuration was too complex and it was not really customizable. As soon as I started `unison` it filled my computer with all the compressed scripts and tmp files from the server.
+This example shows usage with Visual Studio Code but since it's an external script, you can use it with any editor you want.
 
-Other options were mostly either not working or doing so many other things that I don't need. I only want to upload files to remote server when they are changed. That's it. 
+Features
+--------
+ - Easy to setup
+ - Fast and reliable
+ - Runs independently from your toolchain so you can use it with anyting
+ - Runs on windows, osx and linux
+ - detects and handles changes on folders
+ - can run multiple instances at the same time
 
-### Features
 
-- Fast and reliable change detection
-- Very light weight, doesn't use excessive CPU power
-- Internal command line to control the script while it's working
-- Doesn't depend on any editor, so you can use it with any application
-- It's very simplistic and customizable, you can alter the script however you like
-- Colorful and interactive output.
-- And many more
+Installation
+------------
 
-### Installation 
-Just clone this repository `anywhere` on your computer
+Syncjs is easy to install, just execute the following
 
 ```
-git clone git@github.com:serkanyersen/sync.git
+npm install -g syncjs
 ```
-Go inside `sync	` folder and install dependencies
 
-```
-cd sync
-npm install
-```
-Create a config file using the example file
+After this you'll have `syncjs` binary available to you.
 
-```
-cp config_example.json config.json
-```
-The config file is very self explanatory, just open it and add your own information
+Configuration
+-------------
 
-```json
-{
-    "host": "username@ssh.yourhost.com",
-    "interval_duration": 1.5,
-    "local_path": "/path/to/local/folder",
-    "remote_path": "/path/to/remote/folder"
-}
-```
-To leverage the openSSH master connection feature, just open `~/.ssh/config` file
-and put the following in it (unless you don't have it already):
+Syncjs comes with an init script and sets itself up for you. All you need to do is to `cd` into your projects directory and  run `syncjs init` it will ask few simple questions and create the config file called `sync-config.json` make sure you include this file in your `.gitignore` because this file might contain passwords or secrets depending on your preferences.
 
 ```
-Host *
-    ControlMaster auto
-    ControlPath ~/.ssh/master-%r@%h:%p
+cd /my/project/folder
+syncjs init
 ```
-Now you are ready to go, start the script by calling sync.js with either `./sync.js` or `nodejs sync.js`
-
-That's it.
-
-### Bonus
-If you are on OSX and using `iTerm` or any other terminal other than the default `Terminal.app`, you can install [TotalTerminal](http://totalterminal.binaryage.com/) formerly known as `Visor` and start `sync.js` from it. And if you add this line to `config.json`
-
-```
-"visorSupport": true
-```
-sync.js will pop visor terminal on the screen for a second and hide it again, so that you'll understand script is currently uploading your change.
-
-It works better when you place the visor at the bottom of the screen and reduce the row count.
+![Configuration](http://i.imgur.com/3VnNDc5.gif, "syncjs init")
 
 
+### Questions on config
+ - **Username**: your username that you use to connect to remote machine
+ - **Auth method**:
+    - **Password in config**: This the least secure version of auth. It will keep your password in the config file **as plain text** do not use this please
+    - **Ask during connect**: This option will ask your password again every time you start `syncjs` your password will not be stored anywhere.
+    - **Private Key**: Most secure option, just provide the path for your key file and syncjs will do the rest
 
-## License
-MIT, Go Crazy
+ - **Hostname or IP of the server**: Tell syncjs where to connect
+ - **Port to connect**: defaults to `22` this usually is what you want
+ - **Local path**: syncjs will automatically detect this as the root of your project, but if you only want to sync one specific folder, **provide it here as full path**
+ - **Remote path**: This is where copy of your local folder lives in the remote server. Make sure you type full path here as well.
 
+
+License
+-------
+MIT
