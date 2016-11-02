@@ -12,12 +12,19 @@
     "syncjs": "bin/syncjs"
   },
   "dependencies": {
+    "@types/chalk": "^0.4.31",
+    "@types/chokidar": "^1.4.29",
+    "@types/inquirer": "^0.0.30",
+    "@types/minimist": "^1.1.29",
+    "@types/node": "^6.0.46",
+    "@types/rx": "^2.5.33",
+    "@types/through": "^0.0.28",
     "chalk": "^1.1.3",
-    "chokidar": "^1.6.0",
+    "chokidar": "^1.6.1",
     "inquirer": "^1.1.2",
     "jsonplus": "^1.2.1",
     "minimist": "^1.2.0",
-    "moment": "2.14.1",
+    "moment": "2.15.2",
     "observatory": "^1.0.0",
     "prompt": "^1.0.0",
     "scp2": "^0.5.0",
@@ -25,14 +32,14 @@
   },
   "description": "sync.js let's you keep your remote files in sync with your local copy. Whenever you make a change on your local project, sync.js uploads the changed files to remote server using `scp` command.",
   "devDependencies": {
-    "typescript": "^1.8.10",
-    "babel-cli": "^6.11.4",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-runtime": "^6.11.6",
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-runtime": "^6.18.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-rename": "^1.2.2",
-    "gulp-typescript": "^2.13.6"
+    "gulp-typescript": "^3.1.2",
+    "typescript": "^2.0.6"
   },
   "repository": {
     "type": "git",

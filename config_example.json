@@ -1,7 +1,0 @@
-{
-    "username": "ubuntu",
-    "host": "ec2-54-214-239-76.us-west-2.compute.amazonaws.com",
-    "localPath": "C:\\Users\\serka\\Projects\\sync",
-    "remotePath": "/home/ubuntu/src/sync",
-    "privateKey": "C:\\Users\\serka\\Dropbox\\serkan.io.pem"
-}

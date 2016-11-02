@@ -6,7 +6,7 @@ var rename = require("gulp-rename");
 gulp.task("build", function () {
     var tsProject = ts.createProject(__dirname + "/tsconfig.json");
     return tsProject.src()
-        .pipe(ts(tsProject))
+        .pipe(tsProject())
         .pipe(babel())
         .pipe(rename(function (path) {
             path.extname = ".js";
