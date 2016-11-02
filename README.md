@@ -5,9 +5,11 @@ Syncjs is an easy to use command line tool for uploading your local changes to a
 
 It's useful in situations where your application needs to be on a remote server to run (dev machines, pubdev environments, etc.) but you still want to use your local environment for development. You can simply map you local copy of the project to the remote version and syncjs will do the rest.
 
-![Syncjs](http://i.imgur.com/rLNUErv.gif, "syncjs")
+![Syncjs in use](http://i.imgur.com/rLNUErv.gif, "syncjs")
 
 This example shows usage with Visual Studio Code but since it's an external script, you can use it with any editor you want.
+
+![Vim Example](http://i.imgur.com/drnEET1.gif, "syncjs")
 
 Features
 --------
