@@ -147,10 +147,13 @@ export default class CLI {
 
     usage(message: string = null, code: number = 0): void {
         if (message) {
-            this.write(chalk.red(message) + "n\n");
+            this.write(chalk.red(message) + "\n");
         }
-        this.write(chalk.green.underline("USAGE:\n"));
-        this.write("TODO\n");
+        this.write(chalk.yellow.underline("\nUSAGE:\n"));
+        this.write("Make sure you have the config file by running.\n");
+        this.write(chalk.green("syncjs init\n"));
+        this.write("--------------------\n");
+        this.write("For more details please visit. https://github.com/serkanyersen/sync\n");
         process.exit(code);
     }
 
