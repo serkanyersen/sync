@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "inlineSourceMap": true,
+    "noImplicitAny": false,
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "buildOnSave": true,
+  "exclude": [
+    "node_modules"
+  ]
+}
