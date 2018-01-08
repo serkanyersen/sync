@@ -1,6 +1,7 @@
+[![Known Vulnerabilities](https://snyk.io/test/github/serkanyersen/sync/badge.svg)](https://snyk.io/test/github/serkanyersen/sync)
+
 Syncjs - Upload changed local files to remote server
 ----------------------------------------------------
-
 Syncjs is an easy to use command line tool for uploading your local changes to a remote server.
 
 It's useful in situations where your application needs to be on a remote server to run (dev machines, pubdev environments, etc.) but you still want to use your local environment for development. You can simply map you local copy of the project to the remote version and syncjs will do the rest.
