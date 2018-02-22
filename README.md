@@ -16,7 +16,7 @@ Features
 --------
  - Easy to setup
  - Fast and reliable
- - Runs independently from your toolchain so you can use it with anyting
+ - Runs independently from your toolchain so you can use it with anything
  - Runs on windows, osx and linux
  - detects and handles changes on folders
  - can run multiple instances at the same time
