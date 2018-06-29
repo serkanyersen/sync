@@ -1,4 +1,5 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/serkanyersen/sync/badge.svg)](https://snyk.io/test/github/serkanyersen/sync)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fserkanyersen%2Fsync.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fserkanyersen%2Fsync?ref=badge_shield)
 
 Syncjs - Upload changed local files to remote server
 ----------------------------------------------------
@@ -61,3 +62,7 @@ syncjs init
 License
 -------
 MIT
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fserkanyersen%2Fsync.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fserkanyersen%2Fsync?ref=badge_large)
