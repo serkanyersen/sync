@@ -1,4 +1,4 @@
-import * as chalk from "chalk";
+import chalk = require("chalk");
 import * as minimist from "minimist";
 import inquirer = require("inquirer");
 
@@ -30,7 +30,7 @@ export default class CLI {
     private lastRun: number;
     private timeDiff: number;
     private args: minimist.ParsedArgs;
-    private ui: inquirer.ui.Prompt[] = [];
+    private ui: any[] = []; // inquirer.ui.Prompt
     private activePrompt;
     private pauseEvents: Function[] = [];
     public paused: boolean;
@@ -79,7 +79,7 @@ export default class CLI {
     /**
      * Write something to terminal
      */
-    write(msg: string | chalk.ChalkChain): boolean {
+    write(msg: string): boolean {
         return process.stdout.write.bind(process.stdout)(msg);
     }
 
@@ -89,12 +89,12 @@ export default class CLI {
         // this.showPrompt();
     }
 
-    read(question: any, hidden = false): Promise<any> {
-        let scheme = {
+    read(question: string, hidden = false): Promise<any> {
+        let scheme = ["questions", {
             type: hidden? "password" : "input",
             message: question,
-            name: "response"
-        };
+            name: "response",
+        }];
 
         // Bad type definition
         let promise = <any>inquirer.prompt(scheme);

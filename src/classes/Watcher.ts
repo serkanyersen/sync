@@ -17,7 +17,7 @@ export default class Watcher {
         private base: string = config.localPath
     ) {
 
-        let defaultIgnores: Array<string | RegExp> = [/node_modules/, /.git/, /.svn/, /bower_components/];
+        let defaultIgnores: Array<string | RegExp> = [/node_modules/, /.git/, /.svn/, /bower_components/, /.sync-config.json/];
 
         this.files = chokidar.watch(base, {
             ignored: defaultIgnores.concat(this.config.ignores),
@@ -25,9 +25,12 @@ export default class Watcher {
         });
 
         // Attach events
-        ["all", "add", "change", "unlink", "unlinkDir"].forEach(method => {
-            this.files.on(method, this.handler(method));
+        let events = ["all", "add", "change", "unlink", "unlinkDir"];
+
+        events.forEach(method => {
+            this.files.on(method, path => this.handler(method));
         });
+
     }
 
     ready(): Promise<void> {

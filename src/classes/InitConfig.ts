@@ -16,7 +16,7 @@ export default class InitConfig2 {
             console.log("Existing config found.");
         } catch(e) {}
 
-        let questions: inquirer.Questions = [
+        let questions: inquirer.QuestionCollection = [
             {
                 type: "input",
                 name: "username",
@@ -37,7 +37,7 @@ export default class InitConfig2 {
                     "Password in config",
                     "Ask password during connection",
                     "Private key"
-                ]
+                ],
             },
             {
                 type: "password",
