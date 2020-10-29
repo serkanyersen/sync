@@ -29,7 +29,7 @@ Installation
 Syncjs is easy to install, just execute the following
 
 ```
-npm install -g syncjs
+npm install -g sync
 ```
 
 After this you'll have `syncjs` binary available to you.
@@ -57,6 +57,8 @@ syncjs init
  - **Port to connect**: defaults to `22` this usually is what you want
  - **Local path**: syncjs will automatically detect this as the root of your project, but if you only want to sync one specific folder, **provide it here as full path**
  - **Remote path**: This is where copy of your local folder lives in the remote server. Make sure you type full path here as well.
+[11:37] Silas Köhler
+- **ignores**: An array of strings for files you want to ignore. You can can define strings for absolute paths or regular expression. Default ignores: /node_modules/, /.git/, /.svn/, /bower_components/, /sync-config.json/
 
 
 License

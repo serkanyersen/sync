@@ -17,17 +17,32 @@ export default class Watcher {
         private base: string = config.localPath
     ) {
 
-        let defaultIgnores: Array<string | RegExp> = [/node_modules/, /.git/, /.svn/, /bower_components/];
+        let defaultIgnores: Array<string | RegExp> = [/node_modules/, /.git/, /.svn/, /bower_components/, /sync-config.json/];
+
+        let configIgnored: Array<string | RegExp> = [];
+
+        // Create regular expressions if possible
+        if(this.config.ignores) {
+            configIgnored = this.config.ignores.map(ignoreItem => {
+                console.log(ignoreItem);
+                try {
+                    return new RegExp(ignoreItem);
+                } catch(e) {
+                    return ignoreItem;
+                }
+            });
+        }
 
         this.files = chokidar.watch(base, {
-            ignored: defaultIgnores.concat(this.config.ignores),
+            ignored: defaultIgnores.concat(configIgnored),
             ignoreInitial: true
         });
 
         // Attach events
         ["all", "add", "change", "unlink", "unlinkDir"].forEach(method => {
-            this.files.on(method, this.handler(method));
+            this.files.on(method, this.handler(method).bind(this));
         });
+
     }
 
     ready(): Promise<void> {
@@ -44,7 +59,9 @@ export default class Watcher {
     };
 
     private handler(method: string): Function {
+
         return (...args: string[]) => {
+
             let path: string,
                 event = method;
 
