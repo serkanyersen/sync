@@ -21,6 +21,7 @@ export default class Watcher {
 
         let configIgnored: Array<string | RegExp> = [];
 
+        // Create regular expressions if possible
         if(this.config.ignores) {
             configIgnored = this.config.ignores.map(ignoreItem => {
                 console.log(ignoreItem);
