@@ -1,9 +1,6 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/serkanyersen/sync/badge.svg)](https://snyk.io/test/github/serkanyersen/sync)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fserkanyersen%2Fsync.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fserkanyersen%2Fsync?ref=badge_shield)
 
-
-(this repo is an updated version of fork from serkanyersen/sync)
-
 Syncjs - Upload changed local files to remote server
 ----------------------------------------------------
 Syncjs is an easy to use command line tool for uploading your local changes to a remote server.
@@ -32,7 +29,7 @@ Installation
 Syncjs is easy to install, just execute the following
 
 ```
-npm install -g Taigistal/sync
+npm install -g sync
 ```
 
 After this you'll have `syncjs` binary available to you.
