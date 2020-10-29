@@ -2,7 +2,7 @@
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fserkanyersen%2Fsync.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fserkanyersen%2Fsync?ref=badge_shield)
 
 
-(this is a fork from serkanyersen/sync)
+(this repo is an updated version of fork from serkanyersen/sync)
 
 Syncjs - Upload changed local files to remote server
 ----------------------------------------------------
