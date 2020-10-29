@@ -17,6 +17,5 @@ node_modules
 npm-debug.log
 
 config.json
-dist
 
 sync-config.json
