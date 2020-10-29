@@ -57,7 +57,7 @@ syncjs init
  - **Port to connect**: defaults to `22` this usually is what you want
  - **Local path**: syncjs will automatically detect this as the root of your project, but if you only want to sync one specific folder, **provide it here as full path**
  - **Remote path**: This is where copy of your local folder lives in the remote server. Make sure you type full path here as well.
-
+ - **ignores**: An Array of Strings for Files you want to ignore. You can can define Strings for absolute paths or regular expression. Default ignores: /node_modules/, /.git/, /.svn/, /bower_components/, /sync-config.json/
 
 License
 -------
