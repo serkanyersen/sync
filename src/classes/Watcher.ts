@@ -19,13 +19,17 @@ export default class Watcher {
 
         let defaultIgnores: Array<string | RegExp> = [/node_modules/, /.git/, /.svn/, /bower_components/, /sync-config.json/];
 
-        let configIgnored: Array<string | RegExp> = this.config.ignores.map(ignoreItem => {
-            try {
-                return new RegExp(ignoreItem);
-            } catch(e) {
-                return ignoreItem;
-            }
-        });
+        let configIgnored: Array<string | RegExp> = [];
+
+        if(this.config.ignores) {
+            configIgnored = this.config.ignores.map(ignoreItem => {
+                try {
+                    return new RegExp(ignoreItem);
+                } catch(e) {
+                    return ignoreItem;
+                }
+            });
+        }
 
         this.files = chokidar.watch(base, {
             ignored: defaultIgnores.concat(configIgnored),

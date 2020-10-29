@@ -77,13 +77,18 @@ var Watcher = function () {
     };
 
     var defaultIgnores = [/node_modules/, /.git/, /.svn/, /bower_components/, /sync-config.json/];
-    var configIgnored = this.config.ignores.map(function (ignoreItem) {
-      try {
-        return new RegExp(ignoreItem);
-      } catch (e) {
-        return ignoreItem;
-      }
-    });
+    var configIgnored = [];
+
+    if (this.config.ignores) {
+      configIgnored = this.config.ignores.map(function (ignoreItem) {
+        try {
+          return new RegExp(ignoreItem);
+        } catch (e) {
+          return ignoreItem;
+        }
+      });
+    }
+
     this.files = chokidar.watch(base, {
       ignored: defaultIgnores.concat(configIgnored),
       ignoreInitial: true
