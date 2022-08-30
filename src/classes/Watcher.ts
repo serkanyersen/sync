@@ -1,5 +1,6 @@
 import * as chokidar from "chokidar"
-import * as chalk from "chalk";
+const chalk = require("chalk");
+
 import { FSWatcher } from "fs";
 import Uploader from "./Uploader";
 import Config from "./Config";
@@ -43,7 +44,7 @@ export default class Watcher {
         unlinkDir: chalk.red("DELETED")
     };
 
-    private handler(method: string): Function {
+    private handler(method: string): any {
         return (...args: string[]) => {
             let path: string,
                 event = method;

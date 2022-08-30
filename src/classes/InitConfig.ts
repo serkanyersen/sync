@@ -1,9 +1,7 @@
-import * as chalk from "chalk";
 import * as upath from "upath";
 import { writeFileSync } from 'fs';
-import CLI, { EXIT_CODE } from "./CLI";
 import { SyncConfig, CONFIG_FILE_NAME } from './Config';
-import inquirer = require("inquirer");
+import inquirer, { Question } from "inquirer";
 
 export default class InitConfig2 {
 
@@ -14,9 +12,9 @@ export default class InitConfig2 {
         try {
             currentConf = require(upath.resolve(process.cwd(), CONFIG_FILE_NAME));
             console.log("Existing config found.");
-        } catch(e) {}
+        } catch (e) { }
 
-        let questions: inquirer.Questions = [
+        let questions: any[] = [
             {
                 type: "input",
                 name: "username",

@@ -15,7 +15,7 @@ gulp.task("build", function () {
 });
 
 gulp.task("watch", function() {
-    gulp.watch("./src/**/*.ts", ["build"]);
+    gulp.watch("./src/**/*.ts", gulp.series("build"));
 });
 
-gulp.task("default", ["build", "watch"])
+gulp.task("default",  gulp.series("build", "watch"))

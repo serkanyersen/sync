@@ -2,15 +2,28 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es6",
+    "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "inlineSourceMap": true,
     "noImplicitAny": false,
-    "rootDir": "./src",
+    "sourceMap": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "types": [
+        "node"
+    ],
+    "rootDir": "./",
     "outDir": "./dist"
   },
   "buildOnSave": true,
-  "exclude": [
-    "node_modules"
-  ]
+    /* Basic Options */
+    "lib": [
+      "es2017",
+      "dom"
+  ],
+  "declaration": false, /* Generates corresponding '.d.ts' file. */
+  "removeComments": true, /* Do not emit comments to output. */
+  "importHelpers": true, /* Import emit helpers from 'tslib'. */
+  "downlevelIteration": true, /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
 }

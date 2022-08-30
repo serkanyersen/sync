@@ -1,6 +1,6 @@
-import * as chalk from "chalk";
+import chalk from 'chalk';
 import * as minimist from "minimist";
-import inquirer = require("inquirer");
+import inquirer from 'inquirer';
 
 export enum EXIT_CODE {
     /**
@@ -37,7 +37,7 @@ export default class CLI {
 
     constructor() {
         // Parse arguments
-        this.args = minimist(process.argv.slice(2));
+        this.args = minimist.default(process.argv.slice(2));
         // this.ui = new inquirer.ui.BottomBar();
     }
 
@@ -79,7 +79,7 @@ export default class CLI {
     /**
      * Write something to terminal
      */
-    write(msg: string | chalk.ChalkChain): boolean {
+    write(msg: string): boolean {
         return process.stdout.write.bind(process.stdout)(msg);
     }
 
@@ -90,6 +90,10 @@ export default class CLI {
     }
 
     read(question: any, hidden = false): Promise<any> {
+
+        return new Promise(function (res, rej) {
+            return "password";
+        });
         let scheme = {
             type: hidden? "password" : "input",
             message: question,
@@ -97,18 +101,17 @@ export default class CLI {
         };
 
         // Bad type definition
-        let promise = <any>inquirer.prompt(scheme);
-        this.ui.push(promise['ui']);
+        // let promise = <any>inquirer.prompt(scheme);
+        // this.ui.push(promise['ui']);
 
-        return promise.then((answer) => {
-            return answer.response;
-        });
+        // return promise.then((answer) => {
+        //     return answer.response;
+        // });
     }
 
     closePrompts() {
         this.ui.map((ui) => {
             if (!ui['closed']) {
-                ui.close();
                 ui['closed'] = true;
                 //console.log("closed now")
             } else {
